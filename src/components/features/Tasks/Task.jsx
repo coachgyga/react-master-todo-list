@@ -8,22 +8,22 @@ import InputText from '../../forms/InputText';
 const Task = ({ title, created_at, onDeleteTask: handleDeleteTask, onUpdateTask }) => {
 
 	const [ isEditionModeActive, setIsEditionModeActive ] = useState(false);
-	const inputRef = useRef(null);
+	const editTaskInputRef = useRef(null);
 
 	const handleEditTitle = () => {
 		setIsEditionModeActive(true);
 	}
 
 	useEffect(() => {
-		if (inputRef.current) {
-			inputRef.current.value = title;
+		if (editTaskInputRef.current) {
+			editTaskInputRef.current.value = title;
 		}
 	}, [ isEditionModeActive, title ]);
 
 	const handleSaveTitle = (event) => {
 		event.preventDefault();
 		onUpdateTask({
-			title: inputRef.current.value,
+			title: editTaskInputRef.current.value,
 		});
 		setIsEditionModeActive(false);
 	};
@@ -34,7 +34,7 @@ const Task = ({ title, created_at, onDeleteTask: handleDeleteTask, onUpdateTask 
 			{
 					isEditionModeActive ?
 					<form onSubmit={ handleSaveTitle } style={{ display: 'flex', gap: 8 }}>
-						<InputText ref={ inputRef } />
+						<InputText ref={ editTaskInputRef } />
 						<Button type="submit">Save</Button>
 					</form>
 					: <span role="button" onClick={ handleEditTitle }>{ title }</span>
