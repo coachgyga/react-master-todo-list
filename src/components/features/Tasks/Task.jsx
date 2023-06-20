@@ -1,12 +1,44 @@
 import { string, instanceOf, func } from 'prop-types';
 import Button from '../../ui/Button';
+import { useState } from 'react';
+import { useRef } from 'react';
+import { useEffect } from 'react';
+import InputText from '../../forms/InputText';
 
-const Task = ({ title, created_at, onDeleteTask: handleDeleteTask }) => {
+const Task = ({ title, created_at, onDeleteTask: handleDeleteTask, onUpdateTask }) => {
+
+	const [ isEditionModeActive, setIsEditionModeActive ] = useState(false);
+	const inputRef = useRef(null);
+
+	const handleEditTitle = () => {
+		setIsEditionModeActive(true);
+	}
+
+	useEffect(() => {
+		if (inputRef.current) {
+			inputRef.current.value = title;
+		}
+	}, [ isEditionModeActive, title ]);
+
+	const handleSaveTitle = (event) => {
+		event.preventDefault();
+		onUpdateTask({
+			title: inputRef.current.value,
+		});
+		setIsEditionModeActive(false);
+	};
 
 	return (
 		<tr>
 			<td>
-				{ title }
+			{
+					isEditionModeActive ?
+					<form onSubmit={ handleSaveTitle } style={{ display: 'flex', gap: 8 }}>
+						<InputText ref={ inputRef } />
+						<Button type="submit">Save</Button>
+					</form>
+					: <span role="button" onClick={ handleEditTitle }>{ title }</span>
+				}
 			</td>
 			<td>{ created_at.toLocaleDateString() }</td>
 			<td>
@@ -22,4 +54,5 @@ Task.propTypes = {
 	title: string.isRequired,
 	created_at: instanceOf(Date).isRequired,
 	onDeleteTask: func.isRequired,
+	onUpdateTask: func.isRequired,
 };
