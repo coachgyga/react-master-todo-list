@@ -98,7 +98,7 @@ S'il n'y a pas de tâche dans le tableau, le tableau devra afficher un texte ind
 
 ![Todo list no data](docs/todo-list-no-data.png)
 
-Évidemment, tu devra faire attention aux `prop-types`
+Évidemment, tu devra faire ajouter le typage de tes `props` avec `prop-types`.
 
 > ℹ️ **Information**
 >
