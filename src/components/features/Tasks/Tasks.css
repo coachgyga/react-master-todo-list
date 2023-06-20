@@ -1,0 +1,27 @@
+.tasks-table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.tasks-table th {
+	border-bottom: 1px solid var(--secondary);
+	color: var(--secondary);
+	text-align: left;
+	padding: 1rem 2rem;
+}
+
+.tasks-table th:last-child {
+	text-align: right;
+}
+
+.tasks-table tbody td {
+	padding: 1rem 2rem;
+}
+
+.tasks-table tbody tr:nth-child(even) {
+	background-color: var(--light);
+}
+
+.tasks-table tbody tr td:last-child {
+	text-align: right;
+}

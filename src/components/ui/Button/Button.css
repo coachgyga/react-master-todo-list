@@ -1,0 +1,36 @@
+.btn {
+	padding: 0.5rem 0.8rem;
+	border: none;
+	border-radius: 0.5rem;
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+}
+
+.btn--primary {
+	color: var(--white);
+	background-color: var(--primary);
+}
+
+.btn--danger {
+	color: var(--white);
+	background-color: var(--danger);
+}
+
+.btn--warning {
+	color: var(--secondary);
+	background-color: var(--warning);
+}
+
+.btn--success {
+	color: var(--white);
+	background-color: var(--success);
+}
+
+.btn-light {
+	color: var(--secondary);
+	background-color: var(--light);
+}
+
+.btn:hover {
+	cursor: pointer;
+	opacity: 0.8;
+}
