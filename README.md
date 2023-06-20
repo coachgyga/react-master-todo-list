@@ -1,4 +1,4 @@
-# ⚛️ React Master - Todo list: Révisions et composants non-contrôlés
+# ⚛️ React Master - Todo list: Modification des tâches (Correction)
 
 Dans cet énoncé tu trouvra:
 
