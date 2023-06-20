@@ -16,20 +16,18 @@ const App = () => {
 	}, [ tasks ]);
 
 	const handleCreateNewTask = () => {
-		setTasks(prevTasks => {
-			const title = newTaskInputRef.current.value;
-			const idsList = prevTasks.map(({ id }) => id);
-			const maxId = idsList.length > 0 ? Math.max(...idsList) : 0;
-			const newId = maxId + 1;
-			return [
-				...prevTasks,
-				{
-					id: newId,
-					title,
-					created_at: new Date(),
-				},
-			];
-		});
+		const title = newTaskInputRef.current.value;
+		const idsList = tasks.map(({ id }) => id);
+		const maxId = idsList.length > 0 ? Math.max(...idsList) : 0;
+		const newId = maxId + 1;
+		setTasks([
+			...tasks,
+			{
+				id: newId,
+				title,
+				created_at: new Date(),
+			},
+		]);
 	};
 
 	const handleDeleteTask = (taskId) => () => {
@@ -47,7 +45,7 @@ const App = () => {
 				<Tasks tasks={ tasks } onDeleteTask={ handleDeleteTask }/>
 			</Block>
 		</div>
-	)
+	);
 };
 
 export default App;
