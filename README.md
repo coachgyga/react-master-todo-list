@@ -66,7 +66,9 @@ Ton navigateur va alors se brider et être 6 fois plus lent.
 
 Désormais, si tu tentes d'effectuer une recherche, tu verra que la recherche lag beaucoup plus.
 
-À toi de l'optimiser pour permettre aux personnes ayant un ordinateur peu puissant de l'utiliser avec un minimum de confort.
+Il se peut que la recherche lag même sans que tu aies bridé ton navigateur. Et c'est tout à fait normal si tu cliques sur le champ de recherche et que tu ne peux pas écrire dedans immédiatement, c'est le temps que **React** rende toutes les tâches dans le tableau.
+
+À toi d'optimiser l'interface pour permettre aux personnes ayant un ordinateur peu puissant de l'utiliser avec un minimum de confort.
 
 Il y a des chances que la recherche lag encore même après l'optimisation. Malheureusement, il y a des limites matérielles qui parfois nous empêchent d'optimiser davantage les applications. Ce n'est pas grave. Contente toi de faire de ton mieux.
 

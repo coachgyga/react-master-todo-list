@@ -6,16 +6,16 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import InputText from './components/forms/InputText';
 import InputSearch from './components/forms/InputSearch';
+import { generateMaxId } from './utils/id.util';
+import { generateDummyTasks, getSearchedTasks } from './utils/tasks.util';
 
-const getSearchedTasks = (tasks = [], searchValue = '') => {
-	return tasks.filter(task => task.title.toLowerCase().includes(searchValue.toLowerCase()));
-};
+const dummyTasks = generateDummyTasks(1000);
 
 const App = () => {
 
 	const newTaskInputRef = useRef(null);
 
-	const [ tasks, setTasks ] = useState([]);
+	const [ tasks, setTasks ] = useState(dummyTasks);
 	const [ searchTaskValue, setSearchTaskValue ] = useState('');
 
 	useEffect(() => {
@@ -25,8 +25,7 @@ const App = () => {
 	const handleCreateNewTask = () => {
 		const title = newTaskInputRef.current.value;
 		const idsList = tasks.map(({ id }) => id);
-		const maxId = idsList.length > 0 ? Math.max(...idsList) : 0;
-		const newId = maxId + 1;
+		const newId = generateMaxId(idsList);
 		setTasks([
 			...tasks,
 			{
@@ -52,11 +51,11 @@ const App = () => {
 			return task;
 		})
 		setTasks(updatedTasks);
-	}
+	};
 
 	const handleSearchTask = (value) => {
 		setSearchTaskValue(value);
-	}
+	};
 
 	return (
 		<div className="container">
