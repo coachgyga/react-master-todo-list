@@ -68,6 +68,8 @@ Lorsque l'utilisateur tape dans la barre de recherche, le tableau des tâches do
 
 Si la barre de recherche est vide, le tableau doit afficher la totalité des tâches.
 
+Pour réaliser cette barre de recherche, tu devra créer un nouveau composant dédié.
+
 Il est fort conseillé de réutiliser le composant `InputText` déjà fait pour concevoir ce champ de recherche. De cette façon, nul besoin de réinventer la roue ou de dupliquer du code.
 
 Bon courage ! 💪

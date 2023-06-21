@@ -5,18 +5,12 @@ import Button from '../../todo-list/src/components/ui/Button';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import InputText from './components/forms/InputText';
-import InputSearch from './components/forms/InputSearch';
-
-const getSearchedTasks = (tasks = [], searchValue = '') => {
-	return tasks.filter(task => task.title.toLowerCase().includes(searchValue.toLowerCase()));
-};
 
 const App = () => {
 
 	const newTaskInputRef = useRef(null);
 
 	const [ tasks, setTasks ] = useState([]);
-	const [ searchTaskValue, setSearchTaskValue ] = useState('');
 
 	useEffect(() => {
 		newTaskInputRef.current.value = '';
@@ -54,22 +48,15 @@ const App = () => {
 		setTasks(updatedTasks);
 	}
 
-	const handleSearchTask = (value) => {
-		setSearchTaskValue(value);
-	}
-
 	return (
 		<div className="container">
 			<h1 className="text--primary">Todo</h1>
-			<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
-				<InputSearch label="Search a task" placeholder="Search..." value={ searchTaskValue } onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
-			</div>
 			<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
 				<InputText label="Add a new task" style={{ flexGrow: 1 }} ref={ newTaskInputRef } />
 				<Button onClick={ handleCreateNewTask } style={{ marginTop: 'auto' }}>Create</Button>
 			</div>
 			<Block>
-				<Tasks tasks={ searchTaskValue ? getSearchedTasks(tasks, searchTaskValue) : tasks } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } />
+				<Tasks tasks={ tasks } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } />
 			</Block>
 		</div>
 	);
