@@ -1,9 +1,12 @@
 import './Tasks.css';
 
-import { arrayOf, shape, string, number, instanceOf, func } from 'prop-types';
+import { arrayOf, shape, string, number, instanceOf, func, bool } from 'prop-types';
 import Task from './Task';
+import { useDeferredValue } from 'react';
 
-const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpdateTask }) => {
+const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpdateTask, isLoading }) => {
+
+	const deferredTasks = useDeferredValue(tasks);
 
 	return (
 		<>
@@ -17,11 +20,13 @@ const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpda
 				</thead>
 				<tbody>
 					{
-						tasks.map((task) => <Task key={task.id} onDeleteTask={ handleDeleteTask(task.id) } onUpdateTask={ handleUpdateTask(task.id) } {...task} />)
+						!isLoading &&
+						deferredTasks.map((task) => <Task key={task.id} onDeleteTask={ handleDeleteTask(task.id) } onUpdateTask={ handleUpdateTask(task.id) } {...task} />)
 					}
 				</tbody>
 			</table>
 			{ !tasks || tasks.length === 0 && <p style={{ textAlign: 'center' }}>No data</p>}
+			{ isLoading && <p style={{ textAlign: 'center' }}>Loading data...</p>}
 		</>
 	);
 };
@@ -36,8 +41,10 @@ Tasks.propTypes = {
 	})),
 	onDeleteTask: func.isRequired,
 	onUpdateTask: func.isRequired,
+	isLoading: bool,
 };
 
 Tasks.defaultProps = {
 	tasks: [],
+	isLoading: false,
 };

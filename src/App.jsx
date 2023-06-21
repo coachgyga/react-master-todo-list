@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useTransition } from 'react';
 import Block from '../../todo-list/src/components/ui/Block';
 import Tasks from './components/features/Tasks';
 import Button from '../../todo-list/src/components/ui/Button';
@@ -17,6 +17,8 @@ const App = () => {
 
 	const [ tasks, setTasks ] = useState(dummyTasks);
 	const [ searchTaskValue, setSearchTaskValue ] = useState('');
+
+	// const [ isSearchTasksPending, startSearchTasksTransition ] = useTransition();
 
 	useEffect(() => {
 		newTaskInputRef.current.value = '';
@@ -54,6 +56,9 @@ const App = () => {
 	};
 
 	const handleSearchTask = (value) => {
+		// startSearchTasksTransition(() => {
+		// 	setSearchTaskValue(value);
+		// });
 		setSearchTaskValue(value);
 	};
 
