@@ -1,4 +1,4 @@
-# ⚛️ React Master - Todo list: Optimiser le champ de recherche (Exercice)
+# ⚛️ React Master - Todo list: Optimiser le champ de recherche (Correction)
 
 Dans cet énoncé tu trouvra:
 
