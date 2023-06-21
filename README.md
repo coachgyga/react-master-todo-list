@@ -2,7 +2,7 @@
 
 Dans cet énoncé tu trouvra:
 
-2 💡 indices
+1 💡 indice
 
 ## Sommaire
 
@@ -88,3 +88,7 @@ En principe, après optimisation, tu devrais tout de même voir une nette améli
 Bon courage ! 💪
 
 ## Correction
+
+Tu peux consulter la correction écrite ici: <https://github.com/Atomic-React/react-master-todo-list/tree/ex04/correction#correction>
+
+Ou suivre la correction en vidéo ici: _Bientôt disponible_
