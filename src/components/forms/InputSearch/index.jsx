@@ -1,14 +1,38 @@
+import { useEffect, useState } from 'react';
 import InputText from '../InputText';
-import { object, string, func } from 'prop-types';
+import { object, string, func, number } from 'prop-types';
 
-const InputSearch = ({ label, style, onSearch: handleSearch, ...htmlInputProps }) => {
+let timeoutId;
+
+const InputSearch = ({ label, style, onSearch: handleSearch, debounceDelay, ...htmlInputProps }) => {
+
+	const [ searchValue, setSearchValue ] = useState('');
+
+	useEffect(() => {
+		return () => {
+			if (debounceDelay) {
+				clearTimeout(timeoutId);
+			}
+		}
+	}, [debounceDelay]);
 
 	const handleChangeInputValue = (event) => {
-		handleSearch(event.target.value);
+		const { value } = event.target;
+		setSearchValue(value);
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => {
+			handleSearch(value);
+		}, debounceDelay);
+	};
+
+	const handleInputKeyDown = () => {
+		if (debounceDelay) {
+			clearTimeout(timeoutId);
+		}
 	}
 
 	return (
-		<InputText label={ label } style={ style } type="search" onChange={ handleChangeInputValue } { ...htmlInputProps } />
+		<InputText label={ label } style={ style } type="search" value={ searchValue } onKeyDown={ handleInputKeyDown } onChange={ handleChangeInputValue } { ...htmlInputProps } />
 	);
 };
 
@@ -18,10 +42,12 @@ InputSearch.propTypes = {
 	label: string,
 	style: object,
 	onSearch: func,
+	debounceDelay: number,
 };
 
 InputSearch.defaultProps = {
 	label: '',
 	style: {},
 	onSearch: () => {},
+	debounceDelay: 300,
 };

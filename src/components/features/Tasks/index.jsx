@@ -2,11 +2,8 @@ import './Tasks.css';
 
 import { arrayOf, shape, string, number, instanceOf, func, bool } from 'prop-types';
 import Task from './Task';
-import { useDeferredValue } from 'react';
 
 const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpdateTask, isLoading }) => {
-
-	const deferredTasks = useDeferredValue(tasks);
 
 	return (
 		<>
@@ -21,7 +18,7 @@ const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpda
 				<tbody>
 					{
 						!isLoading &&
-						deferredTasks.map((task) => <Task key={task.id} onDeleteTask={ handleDeleteTask(task.id) } onUpdateTask={ handleUpdateTask(task.id) } {...task} />)
+						tasks.map((task) => <Task key={task.id} onDeleteTask={ handleDeleteTask(task.id) } onUpdateTask={ handleUpdateTask(task.id) } {...task} />)
 					}
 				</tbody>
 			</table>

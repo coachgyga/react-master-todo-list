@@ -1,4 +1,4 @@
-import { useRef, useTransition } from 'react';
+import { useRef } from 'react';
 import Block from '../../todo-list/src/components/ui/Block';
 import Tasks from './components/features/Tasks';
 import Button from '../../todo-list/src/components/ui/Button';
@@ -17,8 +17,6 @@ const App = () => {
 
 	const [ tasks, setTasks ] = useState(dummyTasks);
 	const [ searchTaskValue, setSearchTaskValue ] = useState('');
-
-	// const [ isSearchTasksPending, startSearchTasksTransition ] = useTransition();
 
 	useEffect(() => {
 		newTaskInputRef.current.value = '';
@@ -56,9 +54,6 @@ const App = () => {
 	};
 
 	const handleSearchTask = (value) => {
-		// startSearchTasksTransition(() => {
-		// 	setSearchTaskValue(value);
-		// });
 		setSearchTaskValue(value);
 	};
 
@@ -66,7 +61,7 @@ const App = () => {
 		<div className="container">
 			<h1 className="text--primary">Todo</h1>
 			<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
-				<InputSearch label="Search a task" placeholder="Search..." value={ searchTaskValue } onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
+				<InputSearch label="Search a task" placeholder="Search..." onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
 			</div>
 			<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
 				<InputText label="Add a new task" style={{ flexGrow: 1 }} ref={ newTaskInputRef } />
