@@ -1,0 +1,12 @@
+.form-block {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.form-input {
+	padding: 0.5rem 1rem;
+	box-shadow: var(--shadow);
+	border: none;
+	border-radius: 0.5rem;
+}

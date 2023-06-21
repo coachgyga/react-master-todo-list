@@ -3,7 +3,7 @@ import './Tasks.css';
 import { arrayOf, shape, string, number, instanceOf, func } from 'prop-types';
 import Task from './Task';
 
-const Tasks = ({ tasks, onDeleteTask: handleDeleteTask }) => {
+const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpdateTask }) => {
 
 	return (
 		<>
@@ -17,7 +17,7 @@ const Tasks = ({ tasks, onDeleteTask: handleDeleteTask }) => {
 				</thead>
 				<tbody>
 					{
-						tasks.map((task) => <Task key={task.id} onDeleteTask={ handleDeleteTask(task.id) } {...task} />)
+						tasks.map((task) => <Task key={task.id} onDeleteTask={ handleDeleteTask(task.id) } onUpdateTask={ handleUpdateTask(task.id) } {...task} />)
 					}
 				</tbody>
 			</table>
@@ -34,7 +34,8 @@ Tasks.propTypes = {
 		title: string.isRequired,
 		created_at: instanceOf(Date).isRequired,
 	})),
-	onDeleteTask: func.isRequired
+	onDeleteTask: func.isRequired,
+	onUpdateTask: func.isRequired,
 };
 
 Tasks.defaultProps = {

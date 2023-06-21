@@ -4,6 +4,7 @@ import Tasks from './components/features/Tasks';
 import Button from '../../todo-list/src/components/ui/Button';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import InputText from './components/forms/InputText';
 
 const App = () => {
 
@@ -34,15 +35,28 @@ const App = () => {
 		setTasks(tasks.filter(({ id }) => id !== taskId));
 	};
 
+	const handleUpdateTask = (taskId) => (updatedTask) => {
+		const updatedTasks = tasks.map(task => {
+			if (task.id === taskId) {
+				return {
+					...task,
+					...updatedTask,
+				};
+			}
+			return task;
+		})
+		setTasks(updatedTasks);
+	}
+
 	return (
 		<div className="container">
 			<h1 className="text--primary">Todo</h1>
 			<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
-				<input style={{ flexGrow: 1, borderRadius: 8, border: 'none', padding: '0.5rem 1rem' }} ref={ newTaskInputRef } />
-				<Button onClick={ handleCreateNewTask }>Create</Button>
+				<InputText label="Add a new task" style={{ flexGrow: 1 }} ref={ newTaskInputRef } />
+				<Button onClick={ handleCreateNewTask } style={{ marginTop: 'auto' }}>Create</Button>
 			</div>
 			<Block>
-				<Tasks tasks={ tasks } onDeleteTask={ handleDeleteTask }/>
+				<Tasks tasks={ tasks } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } />
 			</Block>
 		</div>
 	);
