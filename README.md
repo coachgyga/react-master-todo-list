@@ -2,7 +2,7 @@
 
 Dans cet énoncé tu trouvra:
 
-2 💡 indices
+1 💡 indices
 
 ## Sommaire
 
