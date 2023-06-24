@@ -176,4 +176,4 @@ Pense bien à importer `withFilteredTasks` dans `App`:
 import withFilteredTasks from './components/features/Tasks/HOCs/withFilteredTasks';
 ```
 
-Essaie de ton côté, tu verra que la recherche fonctionne !
+Essaie de ton côté, tu verra que la recherche fonctionne ! 👏
