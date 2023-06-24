@@ -125,7 +125,11 @@ const useClickOutSide = (handler) => {
 export default useClickOutSide;
 ```
 
-Si l'écoute de l'événement `click` sur le DOM ne fonctionne pas, l'alternative avec les événements `mousedown` et/ou `touchstart` devrait fonctionner:
+Il est possible que l'écoute de l'événement `click` sur le DOM pose problème. Il y a des chances pour que l'ouverture de la modale ne fonctionne plus.
+
+Qu'il y a un conflit entre le `click` du bouton qui ouvre la modale et le `click` sur tous les éléments à l'extérieur de la modale qui ferme la modale. Le bouton étant à l'extérieur de la modale, il déclenche le `useClickOutSide` qui ferme la modale...
+
+Un alternative avec les événements `mousedown` et/ou `touchstart` devrait fonctionner:
 
 ```jsx
 import { useEffect, useRef } from 'react';
