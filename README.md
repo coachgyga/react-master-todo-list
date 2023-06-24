@@ -1,4 +1,4 @@
-# ⚛️ React Master - Todo list: Optimiser le champ de recherche (Correction)
+# ⚛️ React Master - Todo list: Validation de formulaire (Correction)
 
 Dans cet énoncé tu trouvra:
 
@@ -17,8 +17,7 @@ Dans cet énoncé tu trouvra:
 *   Props
 *   Gestion d'état
 *   Typage des props
-*   Composants contrôlés
-*   Passage de référence
+*   Portails
 
 ## Consignes
 
@@ -39,7 +38,7 @@ cd react-master-todo-list
 Accède à la branche de l'exercice en exécutant la commande:
 
 ```bash
-git switch ex04/exercise
+git switch ex06/exercise
 ```
 
 Puis installes les dépendances avec la commande:
@@ -48,229 +47,414 @@ Puis installes les dépendances avec la commande:
 npm install
 ```
 
-Tu peux maintenant te rendre sur l'URL <http://localhost:5173>. Tu verra qu'il y a beaucoup de tâches qui ont été générées.
+Tu peux maintenant te rendre sur l'URL <http://localhost:5173>. Tu y trouvera l'application dans le même état qu'à la fin de la correction de l'exercice précédent.
 
-Pour cet exercice, nous aurons besoin de faire une petite simulation.
+Dasn cet exercice, tu vas devoir obtenir le rendu suivant:
 
-Admettons que tu disposes d'un ordinateur ayant des performances assez faibles, tu te rendra compte que la recherche des tâches va être vite compliquée et qu'elle va avoir pas mal de latence.
+![delete task modal](docs/delete_task_modal.png)
 
-Pour réaliser cette simulation tu vas avoir besoin de brider volontairement ton navigateur en allant dans l'onglet _"performances"_ de ta console. Cliques ensuite sur la roue dentée en haut à droite:
+Il s'agit d'une modale permettant de demander la confirmation à l'utilisateur lorsque celui-ci clique sur le bouton de suppression d'une tâche.
 
-![console perfs](docs/console_perfs.png)
-
-Puis clique sur _"CPU: No throttling"_ et sélectionne _"6x slowdown"_:
-
-![console cpu throttling](docs/console_cpu_throttling.png)
-
-Ton navigateur va alors se brider et être 6 fois plus lent.
-
-Désormais, si tu tentes d'effectuer une recherche, tu verra que la recherche lag beaucoup plus.
-
-Il se peut que la recherche lag même sans que tu aies bridé ton navigateur. Et c'est tout à fait normal si tu cliques sur le champ de recherche et que tu ne peux pas écrire dedans immédiatement, c'est le temps que **React** rende toutes les tâches dans le tableau.
-
-À toi d'optimiser l'interface pour permettre aux personnes ayant un ordinateur peu puissant de l'utiliser avec un minimum de confort.
-
-Il y a des chances que la recherche lag encore même après l'optimisation. Malheureusement, il y a des limites matérielles qui parfois nous empêchent d'optimiser davantage les applications. Ce n'est pas grave. Contente toi de faire de ton mieux.
-
-En principe, après optimisation, tu devrais tout de même voir une nette amélioration.
+Pour réaliser cette modale, je te recommande de d'abord créer un composant `Modal` générique que tu va pouvoir réutiliser.
 
 <details>
  <summary>💡 <b>Indice</b></summary>
 
- > Il y a deux moyens mis à disposition par **React** pour ce genre d'optimisation. Tu peux utiliser le hook `useDeferredValue` ou le hook `useTransition`.
+ > Lorsque tu vas vouloir utiliser ta modale au niveau des lignes du tableau correspondantes au tâches, tu risques d'avoir des erreurs dans la console. Notamment une qui te dit qu'une `div` ne peut pas être enfants d'éléments de tableaux. Pour corriger cela tu peux utiliser les _portails_.
  >
- > Il y a évidemment des différences entre les deux. Je te laisse les découvrir. Nous verrons les verront pendant la correction.
+ > C'est une fonctionnalité de **React** qui te permet de "téléporter" des éléments dans le DOM pour les placer où tu veux dans ton JSX tout en respectant la sémantique.
  >
- > Voici le lien de la documentation **React** qui parle de `useDeferredValue`: <https://react.dev/reference/react/useDeferredValue>
- >
- > Voici le lien de la documentation **React** qui parle de `useTransition`: <https://react.dev/reference/react/useTransition>
+ > Voici le lien de la documentation **React** qui parle des _portails_: <https://react.dev/reference/react-dom/createPortal>
 
 </details>
+
+Une fois ton composant `Modal` réalisé, crée un nouveau composant qui utilisera `Modal` et qui sera en charge de la confirmation de suppression des tâches.
 
 Bon courage ! 💪
 
 ## Correction
 
-### `useTransition`
+Pour corriger cet exercice, nous allons encore une fois adopter la logique de programmation déclarative.
 
-**React** met à notre disposition deux solutions différentes pour deux cas différents de situation.
+C'est à dire que nous allons déclarer ce que nous voulons faire pour ensuite développer la logique.
 
-Le premier cas, c'est le nôtre, c'est celui où on a le contrôle sur le `state` qui est à l'origine de la mise à jour dans l'interface. Le `state` en question, c'est celui du champ de recherche. C'est `searchTaskValue` qui est responsable du déclenchement de la recherche.
+Chaque tâche dispose d'un bouton _"Delete"_ permettant sa suppression. Nous voulons que ce bouton ouvre d'abord une modale de confirmation avant d'effectuer la suppression.
 
-Nous avons créé ce champ de recherche et nous contrôlons la mise à jour du `state` de la valeur de ce champ.
+Ce bouton se trouvant dans `Task.jsx`, je dois m'y rendre pour y apporter quelques modifications.
 
-Dans ce cas, nous pouvons utiliser le hook `useTransition` qui comme sont nom l'indique va nous permettre de réaliser une sorte de transition entre le moment où l'on tape des caractères dans le champ et le moment où le processus de recherche s'achève.
+Je vais alors remplacer le bouton _"Delete"_ qui se trouve en dernière colonne par un composant qui n'existe pas encore et que je vais nommer `DeleteTaskConfirmationModal`. Il contiendra le bouton _"Delete"_ et la modale:
 
-`useTransition` retourne un tableau qui met à notre disposition deux éléments:
+```jsx
+// Ce composant se trouvera dans le même dossier
+import DeleteTaskConfirmationModal from './DeleteTaskConfirmationModal';
 
-1.   Le premier est un boolean permettant de savoir si une transition est en cours.
-2.   Le second est une fonction permettant de déclencher une transition
+const Task = ({ title, created_at, isDone, onUpdateTask, onDeleteTask: handleDeleteTask }) => {
 
-```js
-const [ isPending, startTransition ] = useTransition();
-```
-
-Comme avec `useState`, on peut nommer ces valeurs comme bon nous semble en fonction du contexte d'utilisation. Par exemple:
-
-```js
-const [ isSearchTasksPending, startSearchTasksTransition ] = useTransition();
-```
-
-On vient ensuite modifier la fonction de recherche pour placer la mise à jour du `state` de la valeur de recherche la fonction qui déclenche la transition.
-
-```js
-const handleSearchTask = (value) => {
-	startSearchTasksTransition(() => {
-		setSearchTaskValue(value);
-	});
+	// ...
+	
+	return (
+		<tr>
+			<td>
+				{
+					isEditionModeActive ?
+					<form onSubmit={ handleSaveTitle } style={{ display: 'flex', gap: 8 }}>
+						<InputText ref={ inputRef } />
+						<Button.Primary type="submit">Save</Button.Primary>
+					</form> 
+					: <span role="button" onClick={ handleEditTitle }>{ title }</span>
+				}
+			</td>
+			<td>{ created_at.toLocaleDateString() }</td>
+			<td><Checkbox value={ isDone } onChange={ handleSwitchCompletedTask } useCheckedAsValue /></td>
+			<td>
+				{ /*
+					On s'attend à ce que DeleteTaskConfirmationModal dispose d'une props
+					émettant l'événement de confirmation pour nous permettre de déclencher la suppression
+				*/ }
+				<DeleteTaskConfirmationModal onConfirm={ handleDeleteTask } />
+			</td>
+		</tr>
+	);
 };
 ```
 
-Si on teste, il y a toujours du lag. Ce lag est causé par le fait que la mise à jour du `state` du champ de recherche est ralentie par la transition. Du coup, on a l'impression que le champ lag.
+Créons maintenant un fichier `DeleteTaskConfirmationModal.jsx` dans le même dossier que `Task.jsx`.
 
-Ce qu'il faut faire, c'est supprimer la `value` reliée au `state` sur `InputSearch` dans `App`:
-
-```jsx
-<InputSearch label="Search a task" placeholder="Search..." onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
-```
-
-Tant pis pour le fait de forcer la synchronisation entre le `state` et le champ... Nous verrons dans la prochaine leçon comment nous pouvons résoudre cela.
-
-En attendant... Ça semble mieux fonctionner ainsi !
-
-La latence restante peut être plus difficile à traiter et dépend des performances de la machine dont dispose l'utilisateur. On peut faire des optimisations pour améliorer l'expérience utilisateur mais il est évident qu'on ne peut pas faire de miracles. Il y a des limites physiques qu'on ne peut pas franchir.
-
-Dans notre cas, l'expérience est déjà bien améliorée.
-
-On peut faire encore mieux en affichant un message indiquant que la recherche est en cours.
-
-Pour cela il faut modifier le composant `Tasks` pour rajouter une props `isLoading`:
+On crée le composant `DeleteTaskConfirmationModal` qui reçoit `onConfirm` dans les `props` et on y intègre le composant `Button`:
 
 ```jsx
-import './Tasks.css';
+import Button from '../../ui/Button';
+import { func } from 'prop-types';
 
-import { arrayOf, shape, string, number, instanceOf, func, bool } from 'prop-types';
-import Task from './Task';
-
-const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpdateTask, isLoading }) => {
+const DeleteTaskConfirmationModal = ({ onConfirm }) => {
 
 	return (
 		<>
-			<table className="tasks-table">
-				<thead>
-					<tr>
-						<th>Title</th>
-						<th>Created At</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					{
-						!isLoading &&
-						tasks.map((task) => <Task key={task.id} onDeleteTask={ handleDeleteTask(task.id) } onUpdateTask={ handleUpdateTask(task.id) } {...task} />)
-					}
-				</tbody>
-			</table>
-			{ !tasks || tasks.length === 0 && <p style={{ textAlign: 'center' }}>No data</p>}
-			{ isLoading && <p style={{ textAlign: 'center' }}>Loading data...</p>}
+			<Button variant="danger">Delete</Button>
+			{ /* La modale sera utilisée ici */ }
 		</>
 	);
 };
 
-export default Tasks;
+export default DeleteTaskConfirmationModal;
 
-Tasks.propTypes = {
-	tasks: arrayOf(shape({
-		id: number.isRequired,
-		title: string.isRequired,
-		created_at: instanceOf(Date).isRequired,
-	})),
-	onDeleteTask: func.isRequired,
-	onUpdateTask: func.isRequired,
-	isLoading: bool,
+// Typage des props
+DeleteTaskConfirmationModal.propTypes = {
+	onConfirm: func,
 };
 
-Tasks.defaultProps = {
-	tasks: [],
-	isLoading: false,
+DeleteTaskConfirmationModal.defaultProps = {
+	onConfirm: () => {},
 };
 ```
 
-Ensuite, retournons dans `App.jsx` pour utiliser cette nouvelle props:
+On s'attend à ce qu'on dispose d'un composant `Modal` capable de recevoir une propriété `isOpen` permettant de définir si la modale est ouverte ou non, et une propriété `onClose` permettant de fermer la modale.
+
+C'est `DeleteTaskConfirmationModal` qui va gérer l'état d'ouvertue de la modale:
 
 ```jsx
-<Tasks isLoading={ isSearchTasksPending } tasks={ searchTaskValue ? getSearchedTasks(tasks, searchTaskValue) : tasks } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } />
-```
+// ...imports
+// On s'attend à ce que le composant Modal se trouve dans le dossier 'ui/'
+import Modal from '../../ui/Modal';
 
-> ℹ️ **Information**
->
-> `startTransition` peut être utilisé sans `useTransition`. Dans ce cas, nous ne disposons pas du boolean permettant de savoir si la transition est en cours ou non.
+const DeleteTaskConfirmationModal = ({ onConfirm }) => {
 
-L'utilisation de ce système de transition permet de donner la priorité à la mise à jour du `state` du champ de recherche au niveau de l'interface utilisateur.
+	const [ isModalOpen, setIsModalOpen ] = useState(false);
 
-Nous pouvons l'utiliser ici car nous avons directement accès au `state` du champ de recherche.
+	const handleOpenModal = () => setIsModalOpen(true);
 
-Mais si ce n'était pas le cas ? Si nous ne pouvions pas avoir accès au `state` du champ de recherche, comment ferions-nous ?
-
-### `useDeferredValue`
-
-Dans les cas où le `state` à l'origine d'un changement dans l'interface n'est pas accessible, **React** met à notre disposition un autre hook qui s'appelle `useDeferredValue`.
-
-Ce hook s'utilise directement sur les données à afficher. Dans notre cas, il s'utilise dans le composant `Tasks`:
-
-```jsx
-const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpdateTask, isLoading }) => {
-
-	const deferredTasks = useDeferredValue(tasks);
+	const handleCloseModal = () => setIsModalOpen(false);
 
 	return (
 		<>
-			<table className="tasks-table">
-				<thead>
-					<tr>
-						<th>Title</th>
-						<th>Created At</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					{
-						!isLoading &&
-						// Il faut ensuite utiliser deferredTasks ici !
-						deferredTasks.map((task) => <Task key={task.id} onDeleteTask={ handleDeleteTask(task.id) } onUpdateTask={ handleUpdateTask(task.id) } {...task} />)
-					}
-				</tbody>
-			</table>
-			{ !tasks || tasks.length === 0 && <p style={{ textAlign: 'center' }}>No data</p>}
-			{ isLoading && <p style={{ textAlign: 'center' }}>Loading data...</p>}
+			<Button variant="danger" onClick={ handleOpenModal }>Delete</Button>
+			<Modal isOpen={ isModalOpen } onClose={ handleCloseModal }>
+				{ /* Modal content */ }
+			</Modal>
 		</>
 	);
 };
 ```
 
-On peut retourner dans `App.jsx` pour commenter l'utilisation de la transition:
+La modale devra recevoir des enfants afin de pouvoir y placer le contenu désiré.
+
+On attend de cette `Modal` qu'elle nous fournisse en quelque sorte des _composants secondaires_ afin de standardiser la structure de la modale.
+
+Le but ici, c'est de faire en sorte que toutes les modales de l'application disposent du même design et aient accès aux mêmes fonctionnalités.
+
+Il faudrait donc que le composant `Modal` fournisse des _"sous-composants"_ pour l'en-tête, le titre, le contenu et le pied de la modale.
+
+Pour cela, on va utiliser le pattern de la _"JSX Dot Notation"_. C'est une notation permettant de créer des composants dépendants d'autres composants.
+
+Par exemple, je veux que le composant _"en-tête de modale"_ que l'on va appeler `Header` ne soit utilisé que dans les modales. Il faut donc rendre ce composant dépendant de `Modal`.
+
+Pour accéder à `Header`, je devrais obligatoirement faire appel à `Modal` et l'utiliser avec la syntaxe `Modal.Header`. C'est pour cela qu'on appelle cette syntaxe la _"JSX Dot Notation"_ (_"dot"_ signifie _"point"_ en anglais).
+
+Cela donne le résultat suivant:
 
 ```jsx
-const handleSearchTask = (value) => {
-	// startSearchTasksTransition(() => {
-	// 	setSearchTaskValue(value);
-	// });
-	setSearchTaskValue(value);
+const DeleteTaskConfirmationModal = ({ onConfirm }) => {
+
+	const [ isModalOpen, setIsModalOpen ] = useState(false);
+
+	const handleOpenModal = () => setIsModalOpen(true);
+
+	const handleCloseModal = () => setIsModalOpen(false);
+
+	return (
+		<>
+			<Button variant="danger" onClick={ handleOpenModal }>Delete</Button>
+			<Modal isOpen={ isModalOpen } onClose={ handleCloseModal }>
+				<Modal.Header>
+					<Modal.Title>
+						Delete this task ?
+					</Modal.Title>
+				</Modal.Header>
+				<Modal.Content>
+					Are you sure you want to delete this task ?
+				</Modal.Content>
+				<Modal.Footer>
+					<Button type='button'>Cancel</Button>
+					<Button variant="danger" type='button'>Confirm</Button>
+				</Modal.Footer>
+			</Modal>
+		</>
+	);
 };
 ```
 
-On peut même refaire la liaison entre le `state` et la `value` de l'`InputSearch`:
+Nous verrons dans un instant comment rendre cela possible.
+
+Terminons d'abord ce composant en rajoutant la logique de confirmation:
 
 ```jsx
-<InputSearch label="Search a task" placeholder="Search..." value={ searchTaskValue } onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
+const DeleteTaskConfirmationModal = ({ onConfirm }) => {
+
+	const [ isModalOpen, setIsModalOpen ] = useState(false);
+
+	const handleOpenModal = () => setIsModalOpen(true);
+
+	const handleCloseModal = () => setIsModalOpen(false);
+
+	const handleConfirm = () => {
+		onConfirm();
+		handleCloseModal();
+	}
+
+	return (
+		<>
+			<Button variant="danger" onClick={ handleOpenModal }>Delete</Button>
+			<Modal isOpen={ isModalOpen } onClose={ handleCloseModal }>
+				<Modal.Header>
+					<Modal.Title>
+						Delete this task ?
+					</Modal.Title>
+				</Modal.Header>
+				<Modal.Content>
+					Are you sure you want to delete this task ?
+				</Modal.Content>
+				<Modal.Footer>
+					<Button type='button' onClick={ handleCloseModal }>Cancel</Button>
+					<Button variant="danger" type='button' onClick={ handleConfirm }>Confirm</Button>
+				</Modal.Footer>
+			</Modal>
+		</>
+	);
+};
 ```
 
-Puisse que ce n'est plus le `state` qui est en attente ici mais l'affichage des tâches.
+Ajoutons maintenant le composant `Modal` dans le dossier `components/ui/`:
 
-Les deux hooks ne doivent pas être utilisés en même temps car ils peuvent impliquer une baisse de performances, ce qui est le contraire de l'effet recherché.
+```jsx
+// On importe le CSS (voir le block de code suivant)
+import './Modal.css';
+import { bool, func, node } from 'prop-types';
 
-Garde à l'esprit qu'avec **React**, toute optimisation de performances nécessite une réflexion préalable pour en déterminer la pertinence et les effets.
+const Modal = ({ isOpen, children, onClose, ...htmlDivProps }) => {
 
-Si on teste à nouveau, on observe de nouveau un gain de performances au niveau du champ de recherche, notamment lorsqu'on efface des caractères.
+	// Si la modale est ouverte, on affiche la div
+	return (
+		isOpen ?
+			<div className='modal-overlay'>
+				<div className="modal" { ...htmlDivProps }>
+					{ children }
+				</div>
+			</div>
+			: null
+	);
 
-Avec `useDeferredValue`, on ne dit pas à **React** de rendre la mise à jour du champ prioritaire. On lui indique que l'affichage des résultats doit être différé. En gros il attend que les mises à jour du `state` soient terminées pour pouvoir faire un re-rendu.
+};
+
+export default Modal;
+
+// Le typage des props
+Modal.propTypes = {
+	isOpen: bool,
+	children: node,
+	onClose: func,
+};
+
+Modal.defaultProps = {
+	isOpen: false,
+	children: null,
+	onClose: () => {},
+};
+```
+
+Voilà le CSS du composant:
+
+```CSS
+.modal-overlay {
+	position: absolute;
+	inset: 0;
+	background-color: rgba(0, 0, 0, 0.7);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.modal {
+	box-shadow: var(--shadow);
+	border-radius: 1rem;
+	background-color: var(--white);
+	min-width: 324px;
+	max-width: 648px;
+}
+
+.modal-header {
+	padding: 1rem 2rem;
+	border-bottom: 1px solid var(--light);
+}
+
+.modal-title {
+	font-weight: bold;
+	font-size: 1.2rem;
+	margin: 0;
+}
+
+.modal-content {
+	padding: 2rem 2rem;
+}
+
+.modal-footer {
+	padding: 2rem 2rem;
+	border-top: 1px solid var(--light);
+	display: flex;
+	justify-content: flex-end;
+	gap: 1rem;
+}
+```
+
+La propriété `onClose` ne sera pas utilisée pendant cette correction, elle sera utile dans le prochain exercice. Ne nous en occupons pas pour le moment.
+
+Tu peux remarquer dans le `CSS` fourni qu'il y a des classes pour chaque bloc de la modale.
+
+La modale doit rester flexible pour la développeuse ou le développeur qui l'utilisera. Il faut donc lui laisser le choix d'ajouter ou non un `Header`, un `Footer`, un `Title`, etc...
+
+Mais ces composants, s'ils sont utilisés doivent respecter un design bien précis et sont dépendants du composant `Modal`.
+
+Pour pouvoir permettre la _JSX Dot Notation_, il va falloir créer tout ces composant dans le fichier `Modal.jsx`:
+
+```jsx
+const ModalHeader = ({ children }) => <div className='modal-header'>{ children }</div>;
+
+const ModalTitle = ({ children }) => <h5 className="modal-title">{ children }</h5>
+
+const ModalContent = ({ children }) => <div className="modal-content">{ children }</div>;
+
+const ModalFooter = ({ children }) => <div className="modal-footer">{ children }</div>;
+```
+
+Ensuite, il faut les ajouter en tant que propriété de la constante `Modal`:
+
+```jsx
+Modal.Header = ModalHeader;
+Modal.Title = ModalTitle;
+Modal.Content = ModalContent;
+Modal.Footer = ModalFooter;
+```
+
+Sans oublier le typage des props:
+
+```jsx
+ModalHeader.propTypes = {
+	children: node,
+};
+
+ModalHeader.defaultProps = {
+	children: null,
+};
+
+ModalTitle.propTypes = {
+	children: node,
+};
+
+ModalTitle.defaultProps = {
+	children: null,
+};
+
+ModalContent.propTypes = {
+	children: node,
+};
+
+ModalContent.defaultProps = {
+	children: null,
+};
+
+ModalFooter.propTypes = {
+	children: node,
+};
+
+ModalFooter.defaultProps = {
+	children: null,
+};
+```
+
+Et c'est tout !
+
+Désormais, la modale de confirmation de suppression devrait fonctionner.
+
+Cependant il y a des erreurs dans la console indiquant que la `div` de la modale ne peut être enfant d'un élément de tableau HTML.
+
+De plus, l'`overlay` de la modale, c'est à dire la `div` qui contient toute la modale et qui dispose du fond sombre et partiellement transparent, est en `position: absolute` pour permettre l'affichage de la modale par dessus tous les autres composants.
+
+Si tu rajoutes un `position: relative` sur la balise `table` qui se trouve dans `Tasks/index.jsx`, tu vas vite t'apercevoir qu'il y a un problème dans l'interface.
+
+La modale prend maintenant pour référence le tableau. C'est du CSS de base, tout élément en `position: absolute` prend pour référence de positionnement son parent le plus proche en `position: relative`.
+
+Comme solution à ces deux problèmes, nous pourrions placer la modale dans un composant parent et adapter la logique de suppression en conséquence. Mais il existe une méthode beaucoup plus simple que d'entamer un refactoring.
+
+Cette méthode consiste à élever la modale dans la hiérarchie des éléments HTML, sans pour autant changer son emplacement dans le JSX.
+
+Dans le JSX, elle est enfant d'une ligne de tableau, mais dans le HTML, elle sera enfant direct de `body`.
+
+Ce moyen, c'est `createPortal`. Un composant d'ordre supérieur (nous en parlons bientôt, promis) fournit par **React** qui permet de faire exactement ce que je viens de décrire: téléporter des éléments JSX à travers le DOM.
+
+Il s'utilise de cette façon:
+
+```jsx
+import { createPortal } from 'react-dom';
+
+
+const Modal = ({ isOpen, children, onClose, ...htmlDivProps }) => {
+
+	return (
+		isOpen
+			? createPortal( // On encapsule le code souhaité dans le portail
+				<div className='modal-overlay'>
+					<div className="modal" ref={ modalRef } { ...htmlDivProps }>
+						{ children }
+					</div>
+				</div>,
+				// On lui donne l'élément du DOM cible (vers lequel le code doit être "téléporté")
+				document.body
+			)
+			: null
+	);
+
+};
+```
+
+Note que c'est `document.body` qui est passé en argument ici et non pas un élément JSX. Le portail ne prend pour cible que des éléments du DOM. Il faut donc passer par l'API `document`. Si tu essaies de passer `<App />` par exemple, tu verra que cela ne fonctionnera pas.
+
+Notre problème est désormais résolu ! 👏

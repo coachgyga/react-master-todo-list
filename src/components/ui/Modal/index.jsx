@@ -4,7 +4,7 @@ import useClickOutSide from '../../hooks/useClickOutSide';
 import { bool, func, node } from 'prop-types';
 
 
-const Modal = ({ isOpen = false, children, onClose, ...htmlDivProps }) => {
+const Modal = ({ isOpen, children, onClose, ...htmlDivProps }) => {
 
 	const modalRef = useClickOutSide(onClose);
 

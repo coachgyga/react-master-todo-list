@@ -5,11 +5,11 @@ import { func } from 'prop-types';
 
 const DeleteTaskConfirmationModal = ({ onConfirm }) => {
 
-	const [ isOpen, setIsOpen ] = useState(false);
+	const [ isModalOpen, setIsModalOpen ] = useState(false);
 
-	const handleOpenModal = () => setIsOpen(true);
+	const handleOpenModal = () => setIsModalOpen(true);
 
-	const handleCloseModal = () => setIsOpen(false);
+	const handleCloseModal = () => setIsModalOpen(false);
 
 	const handleConfirm = () => {
 		onConfirm();
@@ -19,7 +19,7 @@ const DeleteTaskConfirmationModal = ({ onConfirm }) => {
 	return (
 		<>
 			<Button variant="danger" onClick={ handleOpenModal }>Delete</Button>
-			<Modal isOpen={ isOpen } onClose={ handleCloseModal }>
+			<Modal isOpen={ isModalOpen } onClose={ handleCloseModal }>
 				<Modal.Header>
 					<Modal.Title>
 						Delete this task ?
