@@ -6,7 +6,6 @@ import { generateMaxId } from './utils/id.util';
 import { getSearchedTasks } from './utils/tasks.util';
 import CreateTaskFormModal from './components/features/Tasks/CreateTaskFormModal';
 import withFilteredTasks from './components/features/Tasks/HOCs/withFilteredTasks';
-import Tabs from './components/ui/Tabs';
 
 const tabs = [
 	{
@@ -23,9 +22,7 @@ const tabs = [
 	},
 ];
 
-const AllFilteredTasks = withFilteredTasks(Tasks, ({ tasks, searchValue }) => getSearchedTasks(tasks, searchValue));
-const TodoFilteredTasks = withFilteredTasks(Tasks, ({ tasks, searchValue }) => getSearchedTasks(tasks.filter(task => !task.isDone), searchValue));
-const CompletedFilteredTasks = withFilteredTasks(Tasks, ({ tasks, searchValue }) => getSearchedTasks(tasks.filter(task => task.isDone), searchValue));
+const FilteredTasks = withFilteredTasks(Tasks, ({ tasks, searchValue }) => getSearchedTasks(tasks, searchValue));
 
 const App = () => {
 
@@ -75,19 +72,7 @@ const App = () => {
 				<CreateTaskFormModal onSubmit={ handleSubmitCreateTaskForm } />
 			</div>
 			<Block>
-				<Tabs
-					tabs={ tabs }
-					defaultActiveTabId={ 0 }
-					renderContent={
-						({ activeTabId }) => (
-							<>
-								{ activeTabId === 0 && <AllFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-								{ activeTabId === 1 && <TodoFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-								{ activeTabId === 2 && <CompletedFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-							</>
-						)
-					}
-				/>
+				<FilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } />
 			</Block>
 		</div>
 	);

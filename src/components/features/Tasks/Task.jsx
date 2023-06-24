@@ -1,13 +1,12 @@
-import { string, instanceOf, func, bool } from 'prop-types';
+import { string, instanceOf, func } from 'prop-types';
 import Button from '../../ui/Button';
 import { useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import InputText from '../../forms/InputText';
 import DeleteTaskConfirmModal from './DeleteTaskConfirmModal';
-import Checkbox from '../../forms/Checkbox';
 
-const Task = ({ title, created_at, isDone, onDeleteTask: handleDeleteTask, onUpdateTask }) => {
+const Task = ({ title, created_at, onDeleteTask: handleDeleteTask, onUpdateTask }) => {
 
 	const [ isEditionModeActive, setIsEditionModeActive ] = useState(false);
 	const editTaskInputRef = useRef(null);
@@ -30,12 +29,6 @@ const Task = ({ title, created_at, isDone, onDeleteTask: handleDeleteTask, onUpd
 		setIsEditionModeActive(false);
 	};
 
-	const handleSwitchCompletedTask = (value) => {
-		onUpdateTask({
-			isDone: value,
-		});
-	}
-
 	return (
 		<tr>
 			<td>
@@ -49,7 +42,6 @@ const Task = ({ title, created_at, isDone, onDeleteTask: handleDeleteTask, onUpd
 				}
 			</td>
 			<td>{ created_at.toLocaleDateString() }</td>
-			<td><Checkbox value={ isDone } onChange={ handleSwitchCompletedTask } useCheckedAsValue /></td>
 			<td>
 				<DeleteTaskConfirmModal onConfirm={ handleDeleteTask } />
 			</td>
@@ -64,9 +56,4 @@ Task.propTypes = {
 	created_at: instanceOf(Date).isRequired,
 	onDeleteTask: func.isRequired,
 	onUpdateTask: func.isRequired,
-	isDone: bool,
-};
-
-Task.defaultProps = {
-	isDone: false,
 };

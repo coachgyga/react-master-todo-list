@@ -12,7 +12,6 @@ const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpda
 					<tr>
 						<th>Title</th>
 						<th>Created At</th>
-						<th>Completed</th>
 						<th>Actions</th>
 					</tr>
 				</thead>
@@ -35,7 +34,6 @@ Tasks.propTypes = {
 	tasks: arrayOf(shape({
 		id: number.isRequired,
 		title: string.isRequired,
-		isDone: bool.isRequired,
 		created_at: instanceOf(Date).isRequired,
 	})),
 	onDeleteTask: func.isRequired,
