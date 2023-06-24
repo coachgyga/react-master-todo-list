@@ -41,6 +41,7 @@ const CreateTaskFormModal = ({ onSubmit }) => {
 		if (!errors) {
 			onSubmit(formValue);
 			setFormValue(INITIAL_FORM_VALUE);
+			setIsModalOpen(false);
 		}
 	};
 
