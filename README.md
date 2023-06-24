@@ -1,4 +1,4 @@
-# ⚛️ React Master - Todo list: Composant polymorphique (Correction)
+# ⚛️ React Master - Todo list: Composants d'ordre supérieur (Correction)
 
 ## Sommaire
 
@@ -10,7 +10,7 @@
 ## Notions de l'exercice
 
 *   Props
-*   Composant polymorphique
+*   Composants d'ordre supérieur
 
 ## Consignes
 
@@ -42,200 +42,38 @@ npm install
 
 Tu peux maintenant te rendre sur l'URL <http://localhost:5173>.
 
-Si tu n'as pas fait l'exercice bonus, note que nous avons rajouté un _custom hook_ dénommé `useClickOutSide` permettant de détecter lorsque l'on clique à l'extérieur d'un élément précis. Nous l'utilisons notamment dans le cadre de la modale pour fermer la modale lorsque l'utilisateur clique à l'extérieur.
+Ça y est ! C'est le moment où nous parlons des composants d'ordre supérieur (_"High Order Components"_ en anglais ou _"HOC"_).
 
-Dans cet exercice, tu vas devoir placer le formulaire de création d'une tâche dans une modale.
+Les _"HOCs"_ sont un pattern de développement pour les composants **React** qui permettent de transformer des composants existants sans avoir à modifier directement les composants.
 
-Sur la capture d'écran ci-dessous, tu peux voir qu'il n'y a un bouton _"+ New task"_ à côté du champ de recherche:
+Dans notre cas, nous allons nous servir de ce pattern pour afficher des tâches filtrées.
 
-![new task button](docs/new_task_button.png)
+Nous disposons déjà de la fonctionnalité de recherche pour nos tâches, et nous affichons les tâches recherchées comme ceci:
 
-Ce bouton doit ouvrir cette modale:
+```JSX
+<Tasks tasks={ searchTaskValue ? getSearchedTasks(tasks, searchTaskValue) : tasks } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } />
+```
 
-![new task modal](docs/new_task_modal.png)
+Nous appliquons une condition pour savoir s'il y a une recherche en cours et afficher les tâches recherchées en conséquence.
 
-Tu peux utiliser le composant `CreateTaskForm` pour le convertir en modale à l'aide du composant `Modal` et ses _"composants secondaires"_.
+Mais si nous pouvions faire ceci ? ⬇️
 
-Cependant, le composant `Modal` est une `div`. Nous aimerions que ce composant soit aussi capable de prendre en charge d'autres éléments HTML comme la balise `form`.
+```JSX
+<FilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } />
+```
 
-Nous devrions pouvoir indiquer à la `Modal` de se convertir en formulaire pour nos besoins de cette façon: `<Modal as="form">`
+On utiliserait un composant d'ordre supérieur permettant de passer directement les tâches et la chaîne de caractère correspondant à la recherche effectuée et c'est ce composant d'ordre supérieur qui se chargerait d'utiliser la fonction de recherche.
 
-La propriété `as` doit pouvoir prendre en valeur n'importe quel nom de balise HTML pour permettre à la `Modal` d'adopter le comportement de la balise souhaitée.
+Le composant `Tasks` existe toujours et n'est pas modifié, il est seulement transmis à `FilteredTasks` pour conserver l'affichage et la logique liées aux tâches. D'ailleurs on peut voir dans l'exemple ci-dessus que les props `onDeleteTask` et `onUpdateTask` sont toujours renseignées.
 
-Ceci est un pattern que l'on appelle le _"polymorphisme"_. Je t'invite donc à te renseigner du côté des _"composants polymorphiques"_ (_"polymorphic components"_ en anglais).
+Pour réaliser cet exercice tu vas avoir besoin de prendre le temps d'étudier les _"HOCs"_, consulter des exemples et expérimenter. Prend ton temps, renseigne toi bien et réfléchi à la façon doit tu peux obtenir les résultat montré plus haut.
+
+Voici le lien vers la page de l'ancienne documentation **React** qui en parle: <https://legacy.reactjs.org/docs/higher-order-components.html>
+
+La nouvelle documentation ne parle pas des _"HOCs"_ car il ne s'agit pas d'une fonctionnalité de **React** mais seulement d'un pattern.
+
+Je t'invite à faire des recherches supplémentaires et de trouver des exemples sur Internet pour complémenter ton étude des _"HOCs"_ car l'ancienne documentation de **React** montre des exemples avec des `class components`, et non avec des `function components`.
 
 Bon courage ! 💪
 
 ## Correction
-
-Tout d'abord, il faut convertir le composant `CreateTaskForm` en modale. Pour cela, je le renomme d'abord `CreateTaskFormModal` puis j'intègre le code suivant:
-
-```JSX
-import { useState } from 'react';
-import Button from '../../ui/Button';
-import InputText from '../../forms/InputText';
-import { func } from 'prop-types';
-import Modal from '../../ui/Modal';
-
-const INITIAL_FORM_VALUE = {
-	title: '',
-};
-
-const CreateTaskFormModal = ({ onSubmit }) => {
-
-	const [ formValue, setFormValue ] = useState(INITIAL_FORM_VALUE);
-	const [ isModalOpen, setIsModalOpen ] = useState(false);
-	const [ validationErrors, setValidationsErrors ] = useState();
-
-	const validateForm = () => {
-		let errors;
-		const { title } = formValue;
-		if (title.length < 3) {
-			errors = {
-				...errors,
-				title: 'The task title must contain at least 3 characters.',
-			};
-		}
-		setValidationsErrors(errors);
-		return errors;
-	};
-
-	const handleChangeInput = (inputName) => (event) => {
-		const { value } = event.target;
-		setFormValue({
-			...formValue,
-			[inputName]: value,
-		});
-	};
-
-	const handleSubmitForm = (event) => {
-		event.preventDefault();
-		const errors = validateForm();
-		if (!errors) {
-			onSubmit(formValue);
-			setFormValue(INITIAL_FORM_VALUE);
-		}
-	};
-
-	const handleOpenModal = () => setIsModalOpen(true);
-
-	const handleCloseModal = () => setIsModalOpen(false);
-
-	return (
-		<>
-			<Button onClick={ handleOpenModal } style={{ marginTop: 'auto' }}>+ New Task</Button>
-			{ /* Utilisation du composant polymorphique avec la propriété 'as' */ }
-			<Modal as='form' isOpen={ isModalOpen } onClose={ handleCloseModal } onSubmit={ handleSubmitForm }>
-				<Modal.Header>
-					<Modal.Title>
-						Create new task
-					</Modal.Title>
-				</Modal.Header>
-				<Modal.Content>
-					<InputText label="Title" value={ formValue.title } onChange={ handleChangeInput('title') } error={ validationErrors?.title } />
-				</Modal.Content>
-				<Modal.Footer>
-					<Button type='submit'>Submit</Button>
-				</Modal.Footer>
-			</Modal>
-		</>
-	);
-};
-
-export default CreateTaskFormModal;
-
-CreateTaskFormModal.propTypes = {
-	onSubmit: func.isRequired,
-};
-```
-
-Tu remarques qu'on utlise la propriété `as` sur le composant `Modal` ainsi que `onSubmit`:
-
-```JSX
-<Modal as='form' isOpen={ isModalOpen } onClose={ handleCloseModal } onSubmit={ handleSubmitForm }>
-```
-
-Cette fonctionnalité n'est pas encore développée dans le composant `Modam` mais on y vient.
-
-On part du principe qu'une fois transformée en formulaire, la modale donne accès aux propriétés d'une balise `form`. Nous devrions donc avoir accès à `onSubmit`.
-
-On s'en occupe dans un instant.
-
-D'abord, il faut modifier le JSX du composant `App` et y intégrer notre nouvelle modale:
-
-```JSX
-import CreateTaskFormModal from './components/features/Tasks/CreateTaskFormModal';
-
-const App = () => {
-
-	// ...
-
-	return (
-		<div className="container">
-			<h1 className="text--primary">Todo</h1>
-			<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
-				<InputSearch label="Search a task" placeholder="Search..." onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
-				<CreateTaskFormModal onSubmit={ handleSubmitCreateTaskForm } />
-			</div>
-			<Block>
-				<Tasks tasks={ searchTaskValue ? getSearchedTasks(tasks, searchTaskValue) : tasks } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } />
-			</Block>
-		</div>
-	);
-};
-```
-
-Occupons nous maintenant du composant `Modal`. Elle doit pouvoir recevoir en tant que `props` la propriété `as` qui est une chaine de caractères correspondant à un nom de balise HTML.
-
-Si `as` est renseignée, alors la modale doit utiliser cette balise à la place de la `div`. Sinon, elle doit utiliser la `div`.
-
-Cela se fait comme ceci:
-
-```JSX
-const Modal = ({ isOpen, as, children, onClose, ...htmlDivProps }) => {
-
-	// Si `as` est renseignée, alors on l'utilise, sinon, on utilise la `div` classique
-	const ModalComponent = as || 'div';
-
-	const modalRef = useClickOutSide(onClose);
-
-	return (
-		isOpen
-			? createPortal(
-				<div className='modal-overlay'>
-					{ /* On fait appelle à modal component ici */ }
-					<ModalComponent className="modal" ref={ modalRef } { ...htmlDivProps }>
-						{ children }
-					</ModalComponent>
-				</div>,
-				document.body
-			)
-			: null
-	);
-
-};
-```
-
-On ne peux pas utiliser `as` directement en tant que balise HTML. Il faut impérativement la faire passer par une sorte de composant intermédiaire, d'où la présence de la constante `ModalComponent`.
-
-Il faut maintenant ajouter le typage de `as` aux `prop`-types`:
-
-```JSX
-Modal.propTypes = {
-	isOpen: bool,
-	as: elementType,
-	children: node,
-	onClose: func,
-} ;
-
-Modal.defaultProps = {
-	isOpen: false,
-	as: null,
-	children: null,
-	onClose: () => {},
-};
-```
-
-Le type elementType permet d'indiquer que cela doit être une balise HTML valide. Tu verra que si tu passes une chaine de caractères en valeur de `as` qui n'est pas une balise HTML valide, une erreur apparaîtra dans la console.
-
-L'exercice est terminé ! 👏
