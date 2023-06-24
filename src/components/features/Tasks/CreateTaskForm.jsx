@@ -2,16 +2,15 @@ import { useState } from 'react';
 import Button from '../../ui/Button';
 import InputText from '../../forms/InputText';
 import { func } from 'prop-types';
-import Modal from '../../ui/Modal';
 
 const INITIAL_FORM_VALUE = {
 	title: '',
 };
 
-const CreateTaskFormModal = ({ onSubmit }) => {
+const CreateTaskForm = ({ onSubmit }) => {
 
 	const [ formValue, setFormValue ] = useState(INITIAL_FORM_VALUE);
-	const [ isModalOpen, setIsModalOpen ] = useState(false);
+
 	const [ validationErrors, setValidationsErrors ] = useState();
 
 	const validateForm = () => {
@@ -44,32 +43,16 @@ const CreateTaskFormModal = ({ onSubmit }) => {
 		}
 	};
 
-	const handleOpenModal = () => setIsModalOpen(true);
-
-	const handleCloseModal = () => setIsModalOpen(false);
-
 	return (
-		<>
-		<Button onClick={ handleOpenModal } style={{ marginTop: 'auto' }}>+ New Task</Button>
-		<Modal as='form' isOpen={ isModalOpen } onClose={ handleCloseModal } onSubmit={ handleSubmitForm }>
-			<Modal.Header>
-				<Modal.Title>
-					Create new task
-				</Modal.Title>
-			</Modal.Header>
-			<Modal.Content>
-				<InputText label="Title" value={ formValue.title } onChange={ handleChangeInput('title') } error={ validationErrors?.title } />
-			</Modal.Content>
-			<Modal.Footer>
-				<Button type='submit'>Submit</Button>
-			</Modal.Footer>
-		</Modal>
-	</>
+		<form onSubmit={ handleSubmitForm } style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
+			<InputText label="Title" style={{ flexGrow: 1 }} value={ formValue.title } onChange={ handleChangeInput('title') } error={ validationErrors?.title } />
+			<Button type="submit" style={{ marginTop: 'auto' }}>Create</Button>
+		</form>
 	);
 };
 
-export default CreateTaskFormModal;
+export default CreateTaskForm;
 
-CreateTaskFormModal.propTypes = {
+CreateTaskForm.propTypes = {
 	onSubmit: func.isRequired,
 };

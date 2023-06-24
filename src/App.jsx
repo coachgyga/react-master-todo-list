@@ -4,7 +4,7 @@ import { useState } from 'react';
 import InputSearch from './components/forms/InputSearch';
 import { generateMaxId } from './utils/id.util';
 import { getSearchedTasks } from './utils/tasks.util';
-import CreateTaskFormModal from './components/features/Tasks/CreateTaskFormModal';
+import CreateTaskForm from './components/features/Tasks/CreateTaskForm';
 
 const App = () => {
 
@@ -50,8 +50,8 @@ const App = () => {
 			<h1 className="text--primary">Todo</h1>
 			<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
 				<InputSearch label="Search a task" placeholder="Search..." onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
-				<CreateTaskFormModal onSubmit={ handleSubmitCreateTaskForm } />
 			</div>
+			<CreateTaskForm onSubmit={ handleSubmitCreateTaskForm } />
 			<Block>
 				<Tasks tasks={ searchTaskValue ? getSearchedTasks(tasks, searchTaskValue) : tasks } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } />
 			</Block>
