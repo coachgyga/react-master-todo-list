@@ -1,18 +1,15 @@
 import { createPortal } from 'react-dom';
 import './Modal.css';
-import useClickOutSide from '../../hooks/useClickOutSide';
 import { bool, func, node } from 'prop-types';
 
 
 const Modal = ({ isOpen, children, onClose, ...htmlDivProps }) => {
 
-	const modalRef = useClickOutSide(onClose);
-
 	return (
 		isOpen
 			? createPortal(
 				<div className='modal-overlay'>
-					<div className="modal" ref={ modalRef } { ...htmlDivProps }>
+					<div className="modal" { ...htmlDivProps }>
 						{ children }
 					</div>
 				</div>,

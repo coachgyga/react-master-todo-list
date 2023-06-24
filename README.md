@@ -55,6 +55,8 @@ Dasn cet exercice, tu vas devoir obtenir le rendu suivant:
 
 Il s'agit d'une modale permettant de demander la confirmation à l'utilisateur lorsque celui-ci clique sur le bouton de suppression d'une tâche.
 
+Évidemment, le bouton _"Cancel"_ doit permettre l'annulation de la suppression, c'est à dire de fermer la modale sans supprimer la tâche. Et le bouton _"Confirm"_ est comme son nom l'indique le bouton de confirmation; il doit supprimer la tâche et également fermer la modale.
+
 Pour réaliser cette modale, je te recommande de d'abord créer un composant `Modal` générique que tu va pouvoir réutiliser.
 
 <details>
