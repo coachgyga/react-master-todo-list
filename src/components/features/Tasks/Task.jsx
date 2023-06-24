@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import InputText from '../../forms/InputText';
+import DeleteTaskConfirmationModal from '../../../../../todo-list/src/components/features/Tasks/DeleteTaskConfirmationModal';
 
 const Task = ({ title, created_at, onDeleteTask: handleDeleteTask, onUpdateTask }) => {
 
@@ -42,7 +43,7 @@ const Task = ({ title, created_at, onDeleteTask: handleDeleteTask, onUpdateTask 
 			</td>
 			<td>{ created_at.toLocaleDateString() }</td>
 			<td>
-				<Button variant="danger" onClick={ handleDeleteTask }>Delete</Button>
+				<DeleteTaskConfirmationModal onConfirm={ handleDeleteTask } />
 			</td>
 		</tr>
 	);

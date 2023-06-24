@@ -7,15 +7,13 @@ import { useEffect } from 'react';
 import InputText from './components/forms/InputText';
 import InputSearch from './components/forms/InputSearch';
 import { generateMaxId } from './utils/id.util';
-import { generateDummyTasks, getSearchedTasks } from './utils/tasks.util';
-
-const dummyTasks = generateDummyTasks(1000);
+import { getSearchedTasks } from './utils/tasks.util';
 
 const App = () => {
 
 	const newTaskInputRef = useRef(null);
 
-	const [ tasks, setTasks ] = useState(dummyTasks);
+	const [ tasks, setTasks ] = useState([]);
 	const [ searchTaskValue, setSearchTaskValue ] = useState('');
 
 	useEffect(() => {
