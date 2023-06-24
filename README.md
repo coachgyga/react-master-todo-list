@@ -1,4 +1,4 @@
-# ⚛️ React Master - Todo list: Améliorer la fermeture de la modale (Correction)
+# ⚛️ React Master - Todo list: Améliorer la fermeture de la modale (Exercice)
 
 Cet exercice est un exercice bonus. Il ne dispose pas d'explication vidéo mais seulement d'une correction écrite.
 
@@ -84,74 +84,6 @@ Bon courage ! 💪
 
 ## Correction
 
-Voici le code du _custom hook_ `useClickOutSide` expliqué:
+Tu peux consulter la correction écrite ici: <https://github.com/Atomic-React/react-master-todo-list/tree/ex07/correction#correction>
 
-```jsx
-import { useEffect, useRef } from 'react';
-
-// On attend 'handler' comme argument: une fonction a exécuté quand le click est déclenché
-const useClickOutSide = (handler) => {
-
-	// On crée une référence qui devra être retournée par le hook pour pouvoir la passer à l'élément ciblé
-	const ref = useRef(null);
-
-	useEffect(() => {
-
-		// On crée un handler qui va s'exécuter quand un événement 'click' est détecté.
-		const handleClickOutSide = (event) => {
-			// Si la référence est bien reliée à un élément
-			// Et que l'élément sur lequel on a cliqué n'est pas contenu dans cet élément
-			if (ref.current && !ref.current.contains(event.target)) {
-				// Alors cela signifie qu'on a cliqué à l'extérieur, on exécute le handler
-				handler();
-			}
-		};
-
-		// On écoute l'événement 'click' sur l'ensemble du DOM
-		document.addEventListener("click", handleClickOutSide);
-
-    return () => {
-		// À la destruction du composant, on supprime l'écouteur d'événement
-		document.removeEventListener("click", handleClickOutSide);
-    };
-	// Si le handler change, on relance le useEffect
-	}, [ handler ]);
-
-	// On retourne la référence
-	return ref;
-
-};
-
-export default useClickOutSide;
-```
-
-Si l'écoute de l'événement `click` sur le DOM ne fonctionne pas, l'alternative avec les événements `mousedown` et/ou `touchstart` devrait fonctionner:
-
-```jsx
-import { useEffect, useRef } from 'react';
-
-const useClickOutSide = (handler) => {
-
-	const ref = useRef(null);
-
-	useEffect(() => {
-		const handleClickOutSide = (event) => {
-			if (ref.current && !ref.current.contains(event.target)) {
-				handler();
-			}
-		};
-		document.addEventListener("mousedown", handleClickOutSide);
-		// document.addEventListener("touchstart", handleClickOutSide);
-
-    return () => {
-		document.removeEventListener("mousedown", handleClickOutSide);
-		// document.removeEventListener("touchstart", handleClickOutSide);
-    };
-	}, [ handler ]);
-
-	return ref;
-
-};
-
-export default useClickOutSide;
-```
+Aucune correction vidéo n'est proposée pour les exercices bonus.
