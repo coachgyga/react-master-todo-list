@@ -1,10 +1,12 @@
 import { createPortal } from 'react-dom';
 import './Modal.css';
 import useClickOutSide from '../../../hooks/useClickOutSide';
-import { bool, func, node } from 'prop-types';
+import { bool, func, node, elementType } from 'prop-types';
 
 
-const Modal = ({ isOpen, children, onClose, ...htmlDivProps }) => {
+const Modal = ({ isOpen, as, children, onClose, ...htmlDivProps }) => {
+
+	const ModalComponent = as || 'div';
 
 	const modalRef = useClickOutSide(onClose);
 
@@ -12,9 +14,9 @@ const Modal = ({ isOpen, children, onClose, ...htmlDivProps }) => {
 		isOpen
 			? createPortal(
 				<div className='modal-overlay'>
-					<div className="modal" ref={ modalRef } { ...htmlDivProps }>
+					<ModalComponent className="modal" ref={ modalRef } { ...htmlDivProps }>
 						{ children }
-					</div>
+					</ModalComponent>
 				</div>,
 				document.body
 			)
@@ -40,12 +42,14 @@ export default Modal;
 
 Modal.propTypes = {
 	isOpen: bool,
+	as: elementType,
 	children: node,
 	onClose: func,
 } ;
 
 Modal.defaultProps = {
 	isOpen: false,
+	as: null,
 	children: null,
 	onClose: () => {},
 };

@@ -10,14 +10,14 @@ const useClickOutSide = (handler) => {
 				handler();
 			}
 		};
-		document.addEventListener("click", handleClickOutSide);
-		// document.addEventListener("mousedown", handleClickOutSide);
-		// document.addEventListener("touchstart", handleClickOutSide);
+		// document.addEventListener("click", handleClickOutSide);
+		document.addEventListener("mousedown", handleClickOutSide);
+		document.addEventListener("touchstart", handleClickOutSide);
 
     return () => {
-		document.removeEventListener("click", handleClickOutSide);
-		// document.removeEventListener("mousedown", handleClickOutSide);
-		// document.removeEventListener("touchstart", handleClickOutSide);
+		// document.removeEventListener("click", handleClickOutSide);
+		document.removeEventListener("mousedown", handleClickOutSide);
+		document.removeEventListener("touchstart", handleClickOutSide);
     };
 	}, [ handler ]);
 
