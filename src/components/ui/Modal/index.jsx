@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import './Modal.css';
-import useClickOutSide from '../../hooks/useClickOutSide';
+import useClickOutSide from '../../../hooks/useClickOutSide';
 import { bool, func, node } from 'prop-types';
 
 
