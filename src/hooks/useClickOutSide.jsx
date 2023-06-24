@@ -11,10 +11,12 @@ const useClickOutSide = (handler) => {
 			}
 		};
 		document.addEventListener("click", handleClickOutSide);
+		// document.addEventListener("mousedown", handleClickOutSide);
 		// document.addEventListener("touchstart", handleClickOutSide);
 
     return () => {
 		document.removeEventListener("click", handleClickOutSide);
+		// document.removeEventListener("mousedown", handleClickOutSide);
 		// document.removeEventListener("touchstart", handleClickOutSide);
     };
 	}, [ handler ]);
