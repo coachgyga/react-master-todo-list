@@ -75,3 +75,7 @@ Une fois ton composant `Modal` réalisé, crée un nouveau composant qui utilise
 Bon courage ! 💪
 
 ## Correction
+
+Tu peux consulter la correction écrite ici: <https://github.com/Atomic-React/react-master-todo-list/tree/ex06/correction#correction>
+
+Ou suivre la correction en vidéo ici: _Bientôt disponible_
