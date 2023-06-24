@@ -13,13 +13,13 @@ const CreateTaskForm = ({ onSubmit }) => {
 
 	const [ validationErrors, setValidationsErrors ] = useState();
 
-	const validateInputs = () => {
+	const validateForm = () => {
 		let errors;
 		const { title } = formValue;
 		if (title.length < 3) {
 			errors = {
 				...errors,
-				title: 'Title must contain at least 3 characters.',
+				title: 'The task title must contain at least 3 characters.',
 			};
 		}
 		setValidationsErrors(errors);
@@ -36,7 +36,7 @@ const CreateTaskForm = ({ onSubmit }) => {
 
 	const handleSubmitForm = (event) => {
 		event.preventDefault();
-		const errors = validateInputs();
+		const errors = validateForm();
 		if (!errors) {
 			onSubmit(formValue);
 			setFormValue(INITIAL_FORM_VALUE);
