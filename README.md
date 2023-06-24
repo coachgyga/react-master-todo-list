@@ -31,7 +31,7 @@ cd react-master-todo-list
 Accède à la branche de l'exercice en exécutant la commande:
 
 ```bash
-git switch ex08/exercise
+git switch ex09/exercise
 ```
 
 Puis installes les dépendances avec la commande:
