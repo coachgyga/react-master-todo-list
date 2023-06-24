@@ -1,4 +1,4 @@
-# ⚛️ React Master - Todo list: Améliorer la fermeture de la modale (Correction)
+# ⚛️ React Master - Todo list: Composant polymorphique (Correction)
 
 ## Sommaire
 
@@ -9,11 +9,8 @@
 
 ## Notions de l'exercice
 
-*   Événements
 *   Props
-*   Gestion d'état
-*   Refs
-*   Custom hooks
+*   Composant polymorphique
 
 ## Consignes
 
