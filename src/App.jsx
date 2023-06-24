@@ -5,7 +5,7 @@ import InputSearch from './components/forms/InputSearch';
 import { generateMaxId } from './utils/id.util';
 import { getSearchedTasks } from './utils/tasks.util';
 import CreateTaskFormModal from './components/features/Tasks/CreateTaskFormModal';
-import withFilteredTasks from '../../todo-list/src/components/features/Tasks/HOCs/withFilteredTasks';
+import withFilteredTasks from './components/features/Tasks/HOCs/withFilteredTasks';
 
 const FilteredTasks = withFilteredTasks(Tasks, ({ tasks, searchValue }) => getSearchedTasks(tasks, searchValue));
 

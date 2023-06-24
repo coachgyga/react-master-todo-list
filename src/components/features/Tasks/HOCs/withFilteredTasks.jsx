@@ -1,8 +1,8 @@
 const withFilteredTasks = (TasksComponent, filterFunction) => {
 
 	const FilteredTasks = (props) => {
-		const tasks = filterFunction(props);
-		return <TasksComponent {...props} tasks={ tasks } />;
+		const filteredTasks = filterFunction(props);
+		return <TasksComponent {...props} tasks={ filteredTasks } />;
 	};
 
 	return FilteredTasks;
