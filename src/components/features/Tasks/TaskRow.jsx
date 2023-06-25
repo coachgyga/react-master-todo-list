@@ -1,16 +1,16 @@
 import { string, instanceOf, bool, number } from 'prop-types';
 import Button from '../../ui/Button';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import InputText from '../../forms/InputText';
 import DeleteTaskConfirmModal from './DeleteTaskConfirmModal';
 import Checkbox from '../../forms/Checkbox';
-import TasksContext from '../../../context/Tasks.context';
+import { useTasksContext } from '../../../context/Tasks.context';
 
-const Task = ({ id, title, created_at, isDone }) => {
+const TaskRow = ({ id, title, created_at, isDone }) => {
 
-	const { updateTask, deleteTask } = useContext(TasksContext);
+	const { updateTask, deleteTask } = useTasksContext();
 
 	const [ isEditionModeActive, setIsEditionModeActive ] = useState(false);
 	const editTaskInputRef = useRef(null);
@@ -66,15 +66,15 @@ const Task = ({ id, title, created_at, isDone }) => {
 	);
 };
 
-export default Task;
+export default TaskRow;
 
-Task.propTypes = {
+TaskRow.propTypes = {
 	id: number.isRequired,
 	title: string.isRequired,
 	created_at: instanceOf(Date).isRequired,
 	isDone: bool,
 };
 
-Task.defaultProps = {
+TaskRow.defaultProps = {
 	isDone: false,
 };
