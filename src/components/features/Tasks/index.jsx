@@ -8,21 +8,6 @@ import { useTasksContext } from '../../../context/Tasks.context';
 import TasksTable from './TasksTable';
 import CreateTaskFormModal from './CreateTaskFormModal';
 
-const tabs = [
-	{
-		id: 0,
-		title: 'All',
-	},
-	{
-		id: 1,
-		title: 'Todo',
-	},
-	{
-		id: 2,
-		title: 'Completed',
-	},
-];
-
 const AllFilteredTasksTable = withFilteredTasks(TasksTable, ({ tasks, searchValue }) => getSearchedTasks(tasks, searchValue));
 const TodoFilteredTasksTable = withFilteredTasks(TasksTable, ({ tasks, searchValue }) => getSearchedTasks(tasks.filter(task => !task.isDone), searchValue));
 const CompletedFilteredTasksTable = withFilteredTasks(TasksTable, ({ tasks, searchValue }) => getSearchedTasks(tasks.filter(task => task.isDone), searchValue));
@@ -32,6 +17,21 @@ const Tasks = () => {
 	const { tasks, createTask } = useTasksContext();
 
 	const [ searchTaskValue, setSearchTaskValue ] = useState('');
+
+	const tabs = [
+		{
+			id: 0,
+			title: 'All (n)',
+		},
+		{
+			id: 1,
+			title: 'Todo (n)',
+		},
+		{
+			id: 2,
+			title: 'Completed (n)',
+		},
+	];
 
 	const handleSubmitCreateTaskForm = (values) => createTask(values);
 

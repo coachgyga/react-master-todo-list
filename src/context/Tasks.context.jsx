@@ -1,6 +1,7 @@
 import { node } from 'prop-types';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useReducer } from 'react';
 import { generateMaxId } from '../utils/id.util';
+import tasksReducer from './Tasks.reducer';
 
 export const TasksContext = createContext({
 	tasks: [],
@@ -20,43 +21,47 @@ export const useTasksContext = () => {
 	return context;
 };
 
+const INITIAL_TASKS_STATE_VALUE = {
+	tasks: [],
+	allTasksCount: 0,
+	todoTasksCount: 0,
+	completedTasksCount: 0,
+};
+
 const TasksContextProvider = ({ children }) => {
 
-	const [ tasks, setTasks ] = useState([]);
+	const [ tasksState, dispatchTasksAction ] = useReducer(tasksReducer, INITIAL_TASKS_STATE_VALUE);
 
 	const createTask = (newTask) => {
-		const idsList = tasks.map(({ id }) => id);
+		const idsList = tasksState.tasks.map(({ id }) => id);
 		const newId = generateMaxId(idsList);
-		setTasks([
-			...tasks,
-			{
+		dispatchTasksAction({
+			type: 'tasks/create',
+			payload: {
 				isDone: false,
 				...newTask,
 				id: newId,
 				created_at: new Date(),
 			},
-		]);
+		});
 	};
 
 	const deleteTask = (taskId) => {
-		setTasks(tasks.filter(({ id }) => id !== taskId));
+		dispatchTasksAction({
+			type: 'tasks/delete',
+			payload: taskId,
+		});
 	};
 
 	const updateTask = (taskToUpdate) => {
-		const updatedTasks = tasks.map(task => {
-			if (task.id === taskToUpdate.id) {
-				return {
-					...task,
-					...taskToUpdate,
-				};
-			}
-			return task;
-		})
-		setTasks(updatedTasks);
+		dispatchTasksAction({
+			type: 'tasks/update',
+			payload: taskToUpdate,
+		});
 	};
 
 	const contextValue = {
-		tasks,
+		tasks: tasksState.tasks,
 		createTask,
 		deleteTask,
 		updateTask,
