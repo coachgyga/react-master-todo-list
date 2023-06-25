@@ -1,4 +1,4 @@
-# ⚛️ React Master - Todo list: Révisions & function as children (Correction)
+# ⚛️ React Master - Todo list: Découverte des contexts (Correction)
 
 Dans cet énoncé tu trouvra:
 
@@ -13,10 +13,7 @@ Dans cet énoncé tu trouvra:
 
 ## Notions de l'exercice
 
-*   Props
-*   State
-*   Function as children
-*   Composants d'ordre supérieur
+*   Context
 
 ## Consignes
 
