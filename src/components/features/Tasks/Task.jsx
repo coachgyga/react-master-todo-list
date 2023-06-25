@@ -1,13 +1,16 @@
-import { string, instanceOf, func, bool } from 'prop-types';
+import { string, instanceOf, bool, number } from 'prop-types';
 import Button from '../../ui/Button';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import InputText from '../../forms/InputText';
 import DeleteTaskConfirmModal from './DeleteTaskConfirmModal';
 import Checkbox from '../../forms/Checkbox';
+import TasksContext from '../../../context/Tasks.context';
 
-const Task = ({ title, created_at, isDone, onDeleteTask: handleDeleteTask, onUpdateTask }) => {
+const Task = ({ id, title, created_at, isDone }) => {
+
+	const { updateTask, deleteTask } = useContext(TasksContext);
 
 	const [ isEditionModeActive, setIsEditionModeActive ] = useState(false);
 	const editTaskInputRef = useRef(null);
@@ -24,16 +27,22 @@ const Task = ({ title, created_at, isDone, onDeleteTask: handleDeleteTask, onUpd
 
 	const handleSaveTitle = (event) => {
 		event.preventDefault();
-		onUpdateTask({
+		updateTask({
+			id,
 			title: editTaskInputRef.current.value,
 		});
 		setIsEditionModeActive(false);
 	};
 
 	const handleSwitchCompletedTask = (value) => {
-		onUpdateTask({
+		updateTask({
+			id,
 			isDone: value,
 		});
+	}
+
+	const handleDeleteTask = () => {
+		deleteTask(id);
 	}
 
 	return (
@@ -60,10 +69,9 @@ const Task = ({ title, created_at, isDone, onDeleteTask: handleDeleteTask, onUpd
 export default Task;
 
 Task.propTypes = {
+	id: number.isRequired,
 	title: string.isRequired,
 	created_at: instanceOf(Date).isRequired,
-	onDeleteTask: func.isRequired,
-	onUpdateTask: func.isRequired,
 	isDone: bool,
 };
 

@@ -1,5 +1,9 @@
 # ⚛️ React Master - Todo list: Révisions & function as children (Correction)
 
+Dans cet énoncé tu trouvra:
+
+1 💡 indice
+
 ## Sommaire
 
 <!-- no toc -->
@@ -33,7 +37,7 @@ cd react-master-todo-list
 Accède à la branche de l'exercice en exécutant la commande:
 
 ```bash
-git switch ex10/exercise
+git switch ex11/exercise
 ```
 
 Puis installes les dépendances avec la commande:
@@ -44,92 +48,181 @@ npm install
 
 Tu peux maintenant te rendre sur l'URL <http://localhost:5173>.
 
-Le but de cet exercice est de réaliser les fonctionnalités suivantes:
+Tu as dû remarquer que notre application commence à devenir un joli sac de nœuds !
 
-*   Ajouter une `checkbox` aux tâches pour permettre de les marquer comme _complétées_
-*   Intégrer un système d'onglets permettant de trier les tâches selons trois vues: _"Toutes"_, _"À faire"_, _"Terminées"_.
+Pour supprimer une tâche, la fonction se trouve dans `App`, mais le bouton se trouve dans `Task`. On se retrouve du coup à devoir passer la fonction depuis `App` à `Tasks` puis enfin à `Task`.
 
-Voici le rendu final attendu:
+Imagine si on avait d'autres composants enfants qui auraient besoin d'accéder à des fonction d'un composant parent assez haut perché dans l'arbre... Ça deviendrait vite l'enfer !
 
-![tasks tabs all](docs/tasks_tabs_all.png)
+Mais heureusement, **React** a créé les contextes !
 
-Rendu des tâches à faire:
+C'est une fonctionnalité qui te permet, entre autres, de transmettre des fonctionnalité issues de composants parents vers des composants enfants, sans devoir traverser toutes les couches de composants.
 
-![tasks tabs todo](docs/tasks_tabs_todo.png)
+C'est une sorte de service auquel n'importe quel composant peut accéder pour en récupérer les fonctionnalités.
 
-Rendu des tâches terminées:
+Ta mission va être de supprimer les intermédiaires. Pour modifier ou supprimer une tâche, nous ne devrions plus avoir besoin de transmettre les fonctions correspondantes par les `props`.
 
-![tasks tabs completed](docs/tasks_tabs_completed.png)
+En gros le `JSX` dans `App`, à l'endroit où on fait appel aux tâches pour les afficher, devrait ressembler à ça:
 
-Pour réliser la partie de l'exercice qui consiste à ajouter une `checkbox`, voici les indications:
-
-*   Ajoute une propriété `isDone` aux tâches
-*   Crée un composant `Checkbox` dans le dossier `components/forms/`
-*   L'état `isDone` de la tâche concernée doit se mettre à jour lorsque l'utilisateur coche ou décoche la case
-
-Pour réaliser la seconde partie, tu vas devoir créer un composant `Tabs` capable de recevoir en tant que `props` la propriété `defaultActiveTabId` permettant de sélectionner un onglet à afficher par défaut et `tabs`, le tableau des onglets à afficher.
-
-Voici le tableau `tabs`:
-
-```jsx
-const tabs = [
-	{
-		id: 0,
-		title: 'All',
-	},
-	{
-		id: 1,
-		title: 'Todo',
-	},
-	{
-		id: 2,
-		title: 'Completed',
-	},
-];
+```JSX
+<Block>
+	<Tabs
+		tabs={ tabs }
+		defaultActiveTabId={ 0 }
+		renderContent={
+			({ activeTabId }) => (
+				<>
+					{ activeTabId === 0 && <AllFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } /> /* plus de onUpdateTask ou de onDeleteTask ! */ }
+					{ activeTabId === 1 && <TodoFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } />  /* plus de onUpdateTask ou de onDeleteTask ! */ }
+					{ activeTabId === 2 && <CompletedFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } />  /* plus de onUpdateTask ou de onDeleteTask ! */ }
+				</>
+			)
+		}
+	/>
+</Block>
 ```
 
-Tu remarques que cette fois-ci, il n'y a pas de propriété `content`.
+Le composant `Task` devrait avoir accès à ces fonctions de suppression et de modification grâce au contexte que l'on appellera `TasksContext`.
 
-L'idée ici est de pouvoir utiliser un pattern qui s'appelle _"Function as children"_.
+Voici le lien de la documentation **React** qui parle des contextes: <https://react.dev/reference/react/createContext#consumer>
 
-On va s'attendre à ce que le composant `Tabs` soit capable de prendre une fonction en tant qu'enfant. Cette fonction renverrai l'`id` de l'onglet en cours d'affichage. En fonction de cet `id`, on afficherait le contenu adéquat.
+<details>
+ <summary>💡 <b>Indice</b></summary>
 
-Voici un exemple de ce qui est attendu:
+ > C'est le composant `App` qui détient l'état des tâches et la logique de mise à jour et de suppression.
+ >
+ > `App` va donc partager ces fonctionnalités au contexte pour que le context puisse à son tour les partager avec les composants enfants qui le demanderont
 
-```jsx
-<Tabs tabs={ tabs } defaultActiveTabId={ 0 }>
-	{
-		({ activeTabId }) => (
-			<>
-				{ activeTabId === 0 && /* Content A */ }
-				{ activeTabId === 1 && /* Content B */ }
-				{ activeTabId === 2 && /* Content C */ }
-			</>
-		)
-	}
-</Tabs>
-```
-
-Voici un lien vers l'ancienne documentation de **React** qui parle des _functions as children_: <https://legacy.reactjs.org/docs/jsx-in-depth.html#functions-as-children>
-
-Les _functions as children_ ne sont pas incrits dans la nouvelle documentation car ce n'est pas une fonctionnalité de **React** mais un pattern.
-
-Enfin, pour le filtrage des tâches, tu devra utiliser le pattern des composant d'ordre supérieur en t'inspirant de ce qui a été fait dans l'exercice précédent.
-
-Le système de recherche doit rester fonctionnel pour tous les onglets !
+</details>
 
 Bon courage ! 💪
 
 ## Correction
 
-Procédons, pour ne pas changer, en mode déclaratif.
-
-Nous voulons rajouter une nouvelle colonne au tableau des tâches: la colonne `completed`.
-
-Pour cela, modifions le composant `Tasks` pour ajouter une cellule dans l'en-tête du tabeau et pensons à mettre à jour le typage des `props`:
+Pour commencer, je vais créer un fichier `Tasks.context.jsx` dans un dossier `context/` à la racine de `src/`:
 
 ```jsx
-const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpdateTask, isLoading }) => {
+import { createContext } from 'react';
+
+const TasksContext = createContext();
+
+export default TasksContext;
+```
+
+On crée donc le contexte et on l'exporte par défaut. Pour le moment, il n'y a rien de plus à faire ici.
+
+En suite, nous devons nous rendre dans `App` pour utiliser le `Provider` du contexte:
+
+```jsx
+const App = () => {
+
+	// ...
+
+	return (
+		// On utilise le Provider et on lui transmet une valeur
+		<TasksContext.Provider value={ contextValue }>
+			<div className="container">
+				<h1 className="text--primary">Todo</h1>
+				<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
+					<InputSearch label="Search a task" placeholder="Search..." onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
+					<CreateTaskFormModal onSubmit={ handleSubmitCreateTaskForm } />
+				</div>
+				<Block>
+					<Tabs
+						tabs={ tabs }
+						defaultActiveTabId={ 0 }
+						renderContent={
+							({ activeTabId }) => (
+								<>
+									{ activeTabId === 0 && <AllFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } /> }
+									{ activeTabId === 1 && <TodoFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } />}
+									{ activeTabId === 2 && <CompletedFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } /> }
+								</>
+							)
+						}
+					/>
+				</Block>
+			</div>
+		</TasksContext.Provider>
+	);
+};
+```
+
+Le `Provider` (_"fournisseur"_ en français) c'est la partie du contexte qui sert à, comme son nom l'indique, fournir les composants enfants.
+
+En valeur du `Provider` on place dans un objet toutes les fonctions et tous les paramètres que nous souhaitons rendre accessibles aux composants enfants.
+
+Je vais apporter une légère modification aux fonctions `handleDeleteTask` et `handleUpdateTask`.
+
+Je vais les renommer car ce ne seront plus des `handlers` à l'avenir, et retirer la curryfication:
+
+```jsx
+const App = () => {
+
+	// ...
+
+	const deleteTask = (taskId) => {
+		setTasks(tasks.filter(({ id }) => id !== taskId));
+	};
+
+	const updateTask = (taskToUpdate) => {
+		const updatedTasks = tasks.map(task => {
+			if (task.id === taskToUpdate.id) {
+				return {
+					...task,
+					...taskToUpdate,
+				};
+			}
+			return task;
+		})
+		setTasks(updatedTasks);
+	};
+
+	// deleteTask et updateTask sont placés en valeur du context
+	const contextValue = {
+		deleteTask,
+		updateTask,
+	};
+
+	return (
+		// On utilise le Provider et on lui transmet la valeur contextValue
+		<TasksContext.Provider value={ contextValue }>
+			<div className="container">
+				<h1 className="text--primary">Todo</h1>
+				<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
+					<InputSearch label="Search a task" placeholder="Search..." onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
+					<CreateTaskFormModal onSubmit={ handleSubmitCreateTaskForm } />
+				</div>
+				<Block>
+					<Tabs
+						tabs={ tabs }
+						defaultActiveTabId={ 0 }
+						renderContent={
+							({ activeTabId }) => (
+								<>
+									{ activeTabId === 0 && <AllFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } /> }
+									{ activeTabId === 1 && <TodoFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } />}
+									{ activeTabId === 2 && <CompletedFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } /> }
+								</>
+							)
+						}
+					/>
+				</Block>
+			</div>
+		</TasksContext.Provider>
+	);
+};
+```
+
+On peut maintenant retirer les fonctions des `props` dans le composant `Tasks` et retirer le typage de ces fonctions:
+
+```jsx
+import './Tasks.css';
+
+import { arrayOf, shape, string, number, instanceOf, bool } from 'prop-types';
+import Task from './Task';
+
+const Tasks = ({ tasks, isLoading }) => { // ICI, les fonctions de suppression et de modification ont été retirées
 
 	return (
 		<>
@@ -138,14 +231,14 @@ const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpda
 					<tr>
 						<th>Title</th>
 						<th>Created At</th>
-						<th>Completed</th> { /* On ajoute une cellule d'en-tête */ }
+						<th>Completed</th>
 						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
 					{
 						!isLoading &&
-						tasks.map((task) => <Task key={task.id} onDeleteTask={ handleDeleteTask(task.id) } onUpdateTask={ handleUpdateTask(task.id) } {...task} />)
+						tasks.map((task) => <Task key={task.id} {...task} />) // ICI, les fonctions de suppression et de modification ont été retirées
 					}
 				</tbody>
 			</table>
@@ -157,39 +250,166 @@ const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpda
 
 export default Tasks;
 
-Tasks.propTypes = {
+Tasks.propTypes = { // ICI, les fonctions de suppression et de modification ont été retirées
 	tasks: arrayOf(shape({
 		id: number.isRequired,
 		title: string.isRequired,
-		isDone: bool.isRequired, // On met à jour le typage des props !
+		isDone: bool.isRequired,
 		created_at: instanceOf(Date).isRequired,
 	})),
-	onDeleteTask: func.isRequired,
-	onUpdateTask: func.isRequired,
 	isLoading: bool,
 };
 
-// ...
+Tasks.defaultProps = {
+	tasks: [],
+	isLoading: false,
+};
 ```
 
-Une fois ceci fait, allons dans le composant `Task` et ajoutons également une nouvelle cellule en pensant au typage des props. On va également supposer que l'on dispose d'un composant `Checkbox`:
+Pareil dans le composant `Task`:
 
 ```jsx
-// ...
-// On importe le composant Checkbox (il n'existe pas encore)
-import Checkbox from '../../forms/Checkbox';
-
-// On récupère la props `isDone`
-const Task = ({ title, created_at, isDone, onDeleteTask: handleDeleteTask, onUpdateTask }) => {
+const Task = ({ id, title, created_at, isDone }) => { // ICI, les fonctions de suppression et de modification ont été retirées
 
 	// ...
 
-	// Fonction permettant la mise à jour de la propriété `isDone`
+	return (
+		<tr>
+			<td>
+			{
+					isEditionModeActive ?
+					<form onSubmit={ handleSaveTitle } style={{ display: 'flex', gap: 8 }}>
+						<InputText ref={ editTaskInputRef } />
+						<Button type="submit">Save</Button>
+					</form>
+					: <span role="button" onClick={ handleEditTitle }>{ title }</span>
+				}
+			</td>
+			<td>{ created_at.toLocaleDateString() }</td>
+			<td><Checkbox value={ isDone } onChange={ handleSwitchCompletedTask } useCheckedAsValue /></td>
+			<td>
+				<DeleteTaskConfirmModal onConfirm={ handleDeleteTask } />
+			</td>
+		</tr>
+	);
+};
+
+export default Task;
+
+Task.propTypes = { // ICI, les fonctions de suppression et de modification ont été retirées
+	title: string.isRequired,
+	created_at: instanceOf(Date).isRequired,
+	isDone: bool,
+};
+```
+
+Cependant, on a des erreurs qui apparaissent dans ce composant. Il va falloir récupérer les fonctions depuis le contexte pour pouvoir les corriger.
+
+Dans le composant `Task`, faisons appelle au contexte en utilisant le hook `useContext`:
+
+```jsx
+const { updateTask, deleteTask } = useContext(TasksContext);
+```
+
+`useContext` prend en argument le contexte que l'on souhaite utiliser et nous retourne la valeur de ce contexte. Comme nous avons placé `updateTask` et `deleteTask` en valeur du contexte, nous pouvons les récupérer directement ici.
+
+Il n'y a plus qu'à modifier les fonctions de mise à jour de `Task`:
+
+```jsx
+const handleSaveTitle = (event) => { // fonction de MAJ du titre
+	event.preventDefault();
+	updateTask({
+		id, // on passe l'id ici
+		title: editTaskInputRef.current.value,
+	});
+	setIsEditionModeActive(false);
+};
+
+const handleSwitchCompletedTask = (value) => { // fonction de MAJ de l'état "à faire"/"terminée"
+	updateTask({
+		id, // on passe l'id ici
+		isDone: value,
+	});
+}
+```
+
+Comme les fonctions ne sont plus curryfiées, il faut passer l'`id` directement dans l'objet de mise à jour en argument de la fonction.
+
+Ce qui veut dire qu'il faut récupérer l'`id` de la tâche depuis les props:
+
+```jsx
+const Task = ({ id, title, created_at, isDone }) => {
+
+	// ...
+};
+
+export default Task;
+
+// On met à jour le typage!
+Task.propTypes = {
+	id: number.isRequired,
+	title: string.isRequired,
+	created_at: instanceOf(Date).isRequired,
+	isDone: bool,
+};
+```
+
+Reste plus que la fonction de suppression à ajouter. La modale de confirmation de suppression fait appelle à la fonction `handleDeleteTask` qui venait des props. Créons cette fonction directement dans le composant `Task`:
+
+```jsx
+const handleDeleteTask = () => {
+	deleteTask(id);
+}
+```
+
+Le composant entier ressemble à cela:
+
+```jsx
+import { string, instanceOf, bool, number } from 'prop-types';
+import Button from '../../ui/Button';
+import { useContext, useState } from 'react';
+import { useRef } from 'react';
+import { useEffect } from 'react';
+import InputText from '../../forms/InputText';
+import DeleteTaskConfirmModal from './DeleteTaskConfirmModal';
+import Checkbox from '../../forms/Checkbox';
+import TasksContext from '../../../context/Tasks.context';
+
+const Task = ({ id, title, created_at, isDone }) => {
+
+	const { updateTask, deleteTask } = useContext(TasksContext);
+
+	const [ isEditionModeActive, setIsEditionModeActive ] = useState(false);
+	const editTaskInputRef = useRef(null);
+
+	const handleEditTitle = () => {
+		setIsEditionModeActive(true);
+	}
+
+	useEffect(() => {
+		if (editTaskInputRef.current) {
+			editTaskInputRef.current.value = title;
+		}
+	}, [ isEditionModeActive, title ]);
+
+	const handleSaveTitle = (event) => {
+		event.preventDefault();
+		updateTask({
+			id,
+			title: editTaskInputRef.current.value,
+		});
+		setIsEditionModeActive(false);
+	};
+
 	const handleSwitchCompletedTask = (value) => {
-		// On réutilise `onUpdateTask` depuis les props
-		onUpdateTask({
+		updateTask({
+			id,
 			isDone: value,
 		});
+	}
+
+	const handleDeleteTask = () => {
+		deleteTask(id);
 	}
 
 	return (
@@ -205,14 +425,7 @@ const Task = ({ title, created_at, isDone, onDeleteTask: handleDeleteTask, onUpd
 				}
 			</td>
 			<td>{ created_at.toLocaleDateString() }</td>
-			{ /*
-				Le composant Checkbox dispose d'une `value` qui rassemble à la fois l'attribut `checked` et `value`
-				Grâce à `useCheckedAsValue` on pourrait choisir si on veut utiliser l'attribut `value` ou l'attribut `checked` comme valeur de référence
-				Dans notre cas, on veut utiliser `checked` car on traite avec un booléen
-
-				Au changement de valeur, la mise à jour est déclenchée via `handleSwitchCompletedTask`
-			*/ }
-			<td><Checkbox value={ isDone } useCheckedAsValue onChange={ handleSwitchCompletedTask } /></td>
+			<td><Checkbox value={ isDone } onChange={ handleSwitchCompletedTask } useCheckedAsValue /></td>
 			<td>
 				<DeleteTaskConfirmModal onConfirm={ handleDeleteTask } />
 			</td>
@@ -222,13 +435,10 @@ const Task = ({ title, created_at, isDone, onDeleteTask: handleDeleteTask, onUpd
 
 export default Task;
 
-// On pense au typage des props !
-
 Task.propTypes = {
+	id: number.isRequired,
 	title: string.isRequired,
 	created_at: instanceOf(Date).isRequired,
-	onDeleteTask: func.isRequired,
-	onUpdateTask: func.isRequired,
 	isDone: bool,
 };
 
@@ -237,337 +447,18 @@ Task.defaultProps = {
 };
 ```
 
-Il faut maintenant créer le composant `Checkbox`, que l'on va venir placer dans le dossier `components/forms/`:
+Revenons une seconde sur le contexte (`Tasks.context.jsx`). Je te propose d'ajouter une valeur par défaut à ce contexte:
 
 ```jsx
-import { bool, func, number, oneOfType, string } from 'prop-types';
-import { useId } from 'react';
-
-// Optionnel: On rajoute un label facultatif pour les cas où on en aurait besoin (comme une validation de CGU ou de mentions légales par exemples)
-const Checkbox = ({ value, onChange, useCheckedAsValue, label, ...htmlInputProps }) => {
-
-	// On génère un id unique
-	const inputId = useId();
-
-	// Au changement de valeur
-	const handleChange = (event) => {
-		// Si useCheckedAsValue est vraie
-		if (useCheckedAsValue) {
-			// On transmet la valeur de l'attribut `checked` via `onChange`
-			onChange(event.target.checked);
-		} else {
-			// On transmet la valeur de l'attribut `value` via `onChange`
-			onChange(event.target.value);
-		}
-	};
-	
-	// Si useCheckedAsValue est vraie, alors on utilise `checked` comme valeur de référence, sinon on utilise `value`
-	const customValue = useCheckedAsValue ? { checked: value } : { value };
-
-	return (
-		<div className="form-checkbox-container">
-			<input { ...htmlInputProps }  type="checkbox" id={ inputId } onChange={ handleChange } { ...customValue } />
-			{ label ? <label htmlFor={ inputId }>{ label }</label> : null }
-		</div>
-	)
-
-};
-
-export default Checkbox;
-
-// Typage des props
-Checkbox.propTypes = {
-	// Si useCheckedAsValue n'est pas vraie, une checkbox peu recevoir
-	// des chaines de caractères ou des nombres en tant que valeur
-	value: oneOfType([ string, number, bool ]).isRequired,
-	onChange: func,
-	useCheckedAsValue: bool,
-	label: string,
-};
-
-Checkbox.defaultProps = {
-	onChange: () => {},
-	useCheckedAsValue: false,
-	label: '',
-};
+const TasksContext = createContext({
+	deleteTask: (taskId) => taskId,
+	updateTask: (taskToUpdate) => taskToUpdate,
+});
 ```
 
-Dans `App.jsx`, il faut penser à ajouter la propriété `isDone` lors de la création d'une tâche:
+Cette valeur permet principalement deux choses:
 
-```jsx
-const handleSubmitCreateTaskForm = (values) => {
-	const idsList = tasks.map(({ id }) => id);
-	const newId = generateMaxId(idsList);
-	setTasks([
-		...tasks,
-		{
-			id: newId,
-			title: values.title,
-			isDone: false, // ICI ! => isDone est false par défaut
-			created_at: new Date(),
-		},
-	]);
-};
-```
+*   Elle permet de toujours disposer des fonctions, même si l'une d'entre elle n'est pas disponible. Par exemple, la fonction `deleteTask` a un problème dans `App`, les composants enfants ne sont pas affectés car il y a la fonction par défaut qui prend le relais.
+*   Elle permet l'auto-complétion au moment de récupérer la valeur avec `useContext`. VS Code reconnaît la valeur du contexte et ça nous permet d'avoir, au moment d'utiliser le contexte, une auto-complétion pour mieux nous y retrouver
 
-Maintenant que la case à cochée est rajoutée, nous pouvons passer aux `tabs`.
-
-Nous savons grâce à l'énoncer de l'exercice que cette structure est attendue:
-
-```jsx
-<Tabs tabs={ tabs } defaultActiveTabId={ 0 }>
-	{
-		({ activeTabId }) => (
-			<>
-				{ activeTabId === 0 && /* Content A */ }
-				{ activeTabId === 1 && /* Content B */ }
-				{ activeTabId === 2 && /* Content C */ }
-			</>
-		)
-	}
-</Tabs>
-```
-
-Nous connaissons donc déjà les `props` qui seront reçues par le composant `Tabs`.
-
-Nous allons déjà rendre les onglets fonctionnels, nous nous occuperons du tri après.
-
-Dans le `JSX` du composant `App`, remplaçons donc cette partie:
-
-```jsx
-<Block>
-	<FilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } />
-</Block>
-```
-
-Par ceci:
-
-```jsx
-<Block>
-	<Tabs tabs={ tabs } defaultActiveTabId={ 0 }>
-		{
-			({ activeTabId }) => (
-				<>
-					{ /* ici nous mettons un simple texte en tant que contenu pour vérifier si nos tabs fonctionnent */ }
-					{ activeTabId === 0 && <p>Content { activeTabId }</p> }
-					{ activeTabId === 1 && <p>Content { activeTabId }</p> }
-					{ activeTabId === 2 && <p>Content { activeTabId }</p> }
-				</>
-			)
-		}
-	</Tabs>
-</Block>
-```
-
-Dans le dossier `components/ui/` nous allons créer le composant `Tabs` et ajouter le CSS correspondant:
-
-```CSS
-.tabs-buttons-container {
-	display: flex;
-	gap: 0.5rem;
-	margin-bottom: 1rem;
-}
-```
-
-Je l'ai récupéré de l'exercice que nous avions fait en début de cours qui impliquait des onglets.
-
-Nous pouvons d'ailleurs récupérer la logique de l'affichage des boutons et de la sélection d'onglet depuis ce précédent exercice. Il s'agit de la même chose ici:
-
-```jsx
-import './Tabs.css';
-import { arrayOf, func, number, shape, string } from 'prop-types';
-import { useState } from 'react';
-import Button from '../Button';
-
-const Tabs = ({ defaultActiveTabId, tabs, children }) => {
-
-	// État de l'onglet actif
-	const [ activeTabId, setActiveTabId ] = useState(defaultActiveTabId);
-
-	// Changement d'onglet actif
-	const handleChangeTab = (tabId) => () => {
-		setActiveTabId(tabId);
-	};
-
-	return (
-		<>
-			<div className="tabs-buttons-container">
-				{
-					// Affichage des boutons
-					tabs.map(({ title, id }) => <Button key={ id } variant={ id === activeTabId ? 'primary' : 'light' } onClick={ handleChangeTab(id) }>{ title }</Button>)
-				}
-			</div>
-			{
-				/* Content */
-			}
-		</>
-	);
-
-};
-
-export default Tabs;
-
-// Typage des props
-
-Tabs.propTypes = {
-	defaultActiveTabId: number,
-	tabs: arrayOf(shape({
-		id: number.isRequired,
-		title: string.isRequired
-	})),
-	children: func.isRequired, // Children doit être une fonction !
-};
-
-Tabs.defaultProps = {
-	defaultActiveTabId: 0,
-	tabs: [],
-};
-```
-
-Ce qui est attendu ici c'est que nous puissions passer en tant qu'enfant de `Tabs` une fonction qui nous donnerai l'id de l'onglet actif.
-
-Ce qui veut dire que je peux exécuter `children` comme une fonction en lui passant `activeTabId` en argument:
-
-```jsx
-const Tabs = ({ defaultActiveTabId, tabs, children }) => {
-
-	// ...
-
-	return (
-		<>
-			<div className="tabs-buttons-container">
-				{
-					tabs.map(({ title, id }) => <Button key={ id } variant={ id === activeTabId ? 'primary' : 'light' } onClick={ handleChangeTab(id) }>{ title }</Button>)
-				}
-			</div>
-			{
-				/* On exécute `children` comme une fonction et lui transmet activeTabId */
-				children({ activeTabId })
-			}
-		</>
-	);
-
-};
-```
-
-Je passe un objet (contenant `activeTabId`) en argument car si je veux transmettre d'autres informations à l'avenir je pourrait le faire plus facilement ainsi.
-
-Occupons nous maintenant du filtrage des tâches avec les _"HOCs"_.
-
-Nous pouvons réutiliser le composant `withFilteredTasks`. Il faudra juste appliquer une petite modification sur le tableau des tâches en fonction du contenu que l'on veut avoir.
-
-Voici les composants à créer au dessus de `App` qui utilisent `withFilteredTasks`:
-
-```jsx
-// Composant pour l'affichage de toutes les tâches (nous l'avions déjà, je l'ai juste renommé)
-const AllFilteredTasks = withFilteredTasks(Tasks, ({ tasks, searchValue }) => getSearchedTasks(tasks, searchValue));
-
-// Composant pour l'affichage des tâches à faire
-const TodoFilteredTasks = withFilteredTasks(Tasks, ({ tasks, searchValue }) => getSearchedTasks(tasks.filter(task => !task.isDone), searchValue));
-
-// Composant pour l'affichage des tâches terminées
-const CompletedFilteredTasks = withFilteredTasks(Tasks, ({ tasks, searchValue }) => getSearchedTasks(tasks.filter(task => task.isDone), searchValue));
-```
-
-Remarques que pour les tâches à faire et les tâches complétées un filtre est ajouté sur les tâches.
-
-Reste plus qu'à mettre à jour les enfants de `Tabs` dans le JSX de `App`:
-
-```jsx
-<Block>
-	<Tabs tabs={ tabs } defaultActiveTabId={ 0 }>
-		{
-			({ activeTabId }) => (
-				<>
-					{ activeTabId === 0 && <AllFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-					{ activeTabId === 1 && <TodoFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-					{ activeTabId === 2 && <CompletedFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-				</>
-			)
-		}
-	</Tabs>
-</Block>
-```
-
-Et c'est fini ! 👏
-
-Un dernier mot tout de même !
-
-Le pattern _"function as children"_ est en réalité considéré comme un anti-pattern auquel il faut faire attention car il ne respecte pas les bonnes pratiques du _clean code_.
-
-Effectivement, dans le JSX du composant `Tabs`, cette ligne de code n'est pas des plus claires:
-
-```jsx
-{
-	children({ activeTabId })
-}
-```
-
-`children` est exécuté comme fonction. Cependant, le nom de cette fonction n'est pas parlante, elle n'explicite pas ce qu'elle fait.
-
-Un article de Donavon West publié en 2017 explique en détail pourquoi il s'agit d'un anti-pattern et qu'elles sont les alternatives "plus propres". Voici le lien de l'article: <https://americanexpress.io/faccs-are-an-antipattern/>.
-
-Ce qu'il faudrait utiliser c'est une propriété dédiée qui s'appellerait par exemple `renderContent`
-
-**React** en parle dans sa nouvelle documentation: <https://react.dev/reference/react/Children#calling-a-render-prop-to-customize-rendering>
-
-Faisons le avec les `Tabs`:
-
-```jsx
-const Tabs = ({ defaultActiveTabId, tabs, renderContent }) => {
-
-	const [ activeTabId, setActiveTabId ] = useState(defaultActiveTabId);
-
-	const handleChangeTab = (tabId) => () => {
-		setActiveTabId(tabId);
-	};
-
-	return (
-		<>
-			<div className="tabs-buttons-container">
-				{
-					tabs.map(({ title, id }) => <Button key={ id } variant={ id === activeTabId ? 'primary' : 'light' } onClick={ handleChangeTab(id) }>{ title }</Button>)
-				}
-			</div>
-			{
-				renderContent({ activeTabId })
-			}
-		</>
-	);
-
-};
-
-export default Tabs;
-
-Tabs.propTypes = {
-	defaultActiveTabId: number,
-	tabs: arrayOf(shape({
-		id: number.isRequired,
-		title: string.isRequired
-	})),
-	renderContent: func.isRequired, // On pense au typage des props !
-};
-```
-
-Et cette propriété s'utiliserait comme ceci dans `App`:
-
-```jsx
-// J'ajoute des retours à la ligne pour y voir plus clair
-<Block>
-	<Tabs
-		tabs={ tabs }
-		defaultActiveTabId={ 0 }
-		renderContent={
-			({ activeTabId }) => (
-				<>
-					{ activeTabId === 0 && <AllFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-					{ activeTabId === 1 && <TodoFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-					{ activeTabId === 2 && <CompletedFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-				</>
-			)
-		}
-	/>
-</Block>
-```
-
-C'est bien mieux comme ça et ça fonctionne toujours ! 👏👏
+Cet exercice est terminé ! 👏

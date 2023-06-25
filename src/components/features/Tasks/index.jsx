@@ -1,9 +1,9 @@
 import './Tasks.css';
 
-import { arrayOf, shape, string, number, instanceOf, func, bool } from 'prop-types';
+import { arrayOf, shape, string, number, instanceOf, bool } from 'prop-types';
 import Task from './Task';
 
-const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpdateTask, isLoading }) => {
+const Tasks = ({ tasks, isLoading }) => {
 
 	return (
 		<>
@@ -19,7 +19,7 @@ const Tasks = ({ tasks, onDeleteTask: handleDeleteTask, onUpdateTask: handleUpda
 				<tbody>
 					{
 						!isLoading &&
-						tasks.map((task) => <Task key={task.id} onDeleteTask={ handleDeleteTask(task.id) } onUpdateTask={ handleUpdateTask(task.id) } {...task} />)
+						tasks.map((task) => <Task key={task.id} {...task} />)
 					}
 				</tbody>
 			</table>
@@ -38,8 +38,6 @@ Tasks.propTypes = {
 		isDone: bool.isRequired,
 		created_at: instanceOf(Date).isRequired,
 	})),
-	onDeleteTask: func.isRequired,
-	onUpdateTask: func.isRequired,
 	isLoading: bool,
 };
 

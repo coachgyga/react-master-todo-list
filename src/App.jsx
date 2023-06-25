@@ -7,6 +7,7 @@ import { getSearchedTasks } from './utils/tasks.util';
 import CreateTaskFormModal from './components/features/Tasks/CreateTaskFormModal';
 import withFilteredTasks from './components/features/Tasks/HOCs/withFilteredTasks';
 import Tabs from './components/ui/Tabs';
+import TasksContext from './context/Tasks.context';
 
 const tabs = [
 	{
@@ -46,16 +47,16 @@ const App = () => {
 		]);
 	};
 
-	const handleDeleteTask = (taskId) => () => {
+	const deleteTask = (taskId) => {
 		setTasks(tasks.filter(({ id }) => id !== taskId));
 	};
 
-	const handleUpdateTask = (taskId) => (updatedTask) => {
+	const updateTask = (taskToUpdate) => {
 		const updatedTasks = tasks.map(task => {
-			if (task.id === taskId) {
+			if (task.id === taskToUpdate.id) {
 				return {
 					...task,
-					...updatedTask,
+					...taskToUpdate,
 				};
 			}
 			return task;
@@ -67,29 +68,36 @@ const App = () => {
 		setSearchTaskValue(value);
 	};
 
+	const contextValue = {
+		deleteTask,
+		updateTask,
+	};
+
 	return (
-		<div className="container">
-			<h1 className="text--primary">Todo</h1>
-			<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
-				<InputSearch label="Search a task" placeholder="Search..." onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
-				<CreateTaskFormModal onSubmit={ handleSubmitCreateTaskForm } />
+		<TasksContext.Provider value={ contextValue }>
+			<div className="container">
+				<h1 className="text--primary">Todo</h1>
+				<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
+					<InputSearch label="Search a task" placeholder="Search..." onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
+					<CreateTaskFormModal onSubmit={ handleSubmitCreateTaskForm } />
+				</div>
+				<Block>
+					<Tabs
+						tabs={ tabs }
+						defaultActiveTabId={ 0 }
+						renderContent={
+							({ activeTabId }) => (
+								<>
+									{ activeTabId === 0 && <AllFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } /> }
+									{ activeTabId === 1 && <TodoFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } />}
+									{ activeTabId === 2 && <CompletedFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } /> }
+								</>
+							)
+						}
+					/>
+				</Block>
 			</div>
-			<Block>
-				<Tabs
-					tabs={ tabs }
-					defaultActiveTabId={ 0 }
-					renderContent={
-						({ activeTabId }) => (
-							<>
-								{ activeTabId === 0 && <AllFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-								{ activeTabId === 1 && <TodoFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-								{ activeTabId === 2 && <CompletedFilteredTasks tasks={ tasks } searchValue={ searchTaskValue } onDeleteTask={ handleDeleteTask } onUpdateTask={ handleUpdateTask } /> }
-							</>
-						)
-					}
-				/>
-			</Block>
-		</div>
+		</TasksContext.Provider>
 	);
 };
 
