@@ -1,10 +1,4 @@
-import { CREATE_TASK_ACTION, DELETE_TASK_ACTION, SET_TASKS_ACTION, TASKS_ERROR_ACTION, TASKS_IDLE_ACTION, TASKS_PENDING_ACTION, UPDATE_TASKS_COUNTERS_ACTION, UPDATE_TASK_ACTION } from './Tasks.actions';
-
-export const TASKS_LOADING_STATE = {
-	IDLE: 'idle',
-	PENDING: 'pending',
-	ERROR: 'error',
-}
+import { CREATE_TASK_ACTION, DELETE_TASK_ACTION, SET_TASKS_ACTION, TASKS_SET_LOADING_ACTION, TASKS_SET_ERROR_ACTION, UPDATE_TASKS_COUNTERS_ACTION, UPDATE_TASK_ACTION } from './Tasks.actions';
 
 const tasksReducer = (state, action) => {
 
@@ -47,23 +41,16 @@ const tasksReducer = (state, action) => {
 				todoTasksCount: state.tasks.filter(task => !task.isDone).length,
 				completedTasksCount: state.tasks.filter(task => task.isDone).length,
 			};
-		case TASKS_IDLE_ACTION:
+		case TASKS_SET_LOADING_ACTION:
 			return {
 				...state,
-				loading: TASKS_LOADING_STATE.IDLE,
-				errorMessage: '',
+				isLoading: action.payload
 			};
-		case TASKS_PENDING_ACTION:
+		case TASKS_SET_ERROR_ACTION:
 			return {
 				...state,
-				loading: TASKS_LOADING_STATE.PENDING,
-				errorMessage: '',
-			};
-		case TASKS_ERROR_ACTION:
-			return {
-				...state,
-				loading: TASKS_LOADING_STATE.ERROR,
-				errorMessage: action.payload,
+				error: action.payload,
+				isLoading: false,
 			};
 		default:
 			return state;
