@@ -1,9 +1,5 @@
 # ⚛️ React Master - Todo list: Gérer les états complexes avec `useReducer` (Correction)
 
-Dans cet énoncé tu trouvra:
-
-1 💡 indice
-
 ## Sommaire
 
 <!-- no toc -->
@@ -35,7 +31,7 @@ cd react-master-todo-list
 Accède à la branche de l'exercice en exécutant la commande:
 
 ```bash
-git switch ex11/exercise
+git switch ex12/exercise
 ```
 
 Puis installes les dépendances avec la commande:
