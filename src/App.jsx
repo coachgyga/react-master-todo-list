@@ -1,4 +1,4 @@
-import TasksContextProvider from './context/Tasks.context';
+import TasksContextProvider from './context/Tasks';
 import Tasks from './components/features/Tasks';
 
 const App = () => {

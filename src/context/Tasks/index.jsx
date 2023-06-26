@@ -1,7 +1,8 @@
 import { node } from 'prop-types';
-import { createContext, useContext, useReducer } from 'react';
-import { generateMaxId } from '../utils/id.util';
+import { createContext, useReducer } from 'react';
+import { generateMaxId } from '../../utils/id.util';
 import tasksReducer from './Tasks.reducer';
+import { CREATE_TASK_ACTION, DELETE_TASK_ACTION, UPDATE_TASKS_COUNTERS_ACTION, UPDATE_TASK_ACTION } from './Tasks.actions';
 
 export const TasksContext = createContext({
 	tasks: [],
@@ -12,17 +13,6 @@ export const TasksContext = createContext({
 	deleteTask: (taskId) => taskId,
 	updateTask: (taskToUpdate) => taskToUpdate,
 });
-
-export const useTasksContext = () => {
-	const context = useContext(TasksContext);
-	if (context === null) {
-		throw new Error('useTasksContext is null');
-	}
-	if (context === undefined) {
-		throw new Error('useTasksContext was used outside of its Provider');
-	}
-	return context;
-};
 
 const INITIAL_TASKS_STATE_VALUE = {
 	tasks: [],
@@ -39,7 +29,7 @@ const TasksContextProvider = ({ children }) => {
 		const idsList = tasksState.tasks.map(({ id }) => id);
 		const newId = generateMaxId(idsList);
 		dispatchTasksAction({
-			type: 'tasks/create',
+			type: CREATE_TASK_ACTION,
 			payload: {
 				isDone: false,
 				...newTask,
@@ -47,23 +37,23 @@ const TasksContextProvider = ({ children }) => {
 				created_at: new Date(),
 			},
 		});
-		dispatchTasksAction({ type: 'tasks/updateCounters' });
+		dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
 	};
 
 	const deleteTask = (taskId) => {
 		dispatchTasksAction({
-			type: 'tasks/delete',
+			type: DELETE_TASK_ACTION,
 			payload: taskId,
 		});
-		dispatchTasksAction({ type: 'tasks/updateCounters' });
+		dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
 	};
 
 	const updateTask = (taskToUpdate) => {
 		dispatchTasksAction({
-			type: 'tasks/update',
+			type: UPDATE_TASK_ACTION,
 			payload: taskToUpdate,
 		});
-		dispatchTasksAction({ type: 'tasks/updateCounters' });
+		dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
 	};
 
 	const contextValue = {

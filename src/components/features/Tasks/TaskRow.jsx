@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import InputText from '../../forms/InputText';
 import DeleteTaskConfirmModal from './DeleteTaskConfirmModal';
 import Checkbox from '../../forms/Checkbox';
-import { useTasksContext } from '../../../context/Tasks.context';
+import useTasksContext from '../../../context/Tasks/useTasksContext';
 
 const TaskRow = ({ id, title, created_at, isDone }) => {
 
