@@ -7,6 +7,7 @@ import withFilteredTasks from './HOCs/withFilteredTasks';
 import useTasksContext from '../../../context/Tasks/useTasksContext';
 import TasksTable from './TasksTable';
 import CreateTaskFormModal from './CreateTaskFormModal';
+import { TASKS_LOADING_STATE } from '../../../context/Tasks/Tasks.reducer';
 
 const AllFilteredTasksTable = withFilteredTasks(TasksTable, ({ tasks, searchValue }) => getSearchedTasks(tasks, searchValue));
 const TodoFilteredTasksTable = withFilteredTasks(TasksTable, ({ tasks, searchValue }) => getSearchedTasks(tasks.filter(task => !task.isDone), searchValue));
@@ -14,7 +15,7 @@ const CompletedFilteredTasksTable = withFilteredTasks(TasksTable, ({ tasks, sear
 
 const Tasks = () => {
 
-	const { tasks, allTasksCount, todoTasksCount, completedTasksCount, createTask } = useTasksContext();
+	const { tasks, allTasksCount, todoTasksCount, completedTasksCount, createTask, loading, errorMessage } = useTasksContext();
 
 	const [ searchTaskValue, setSearchTaskValue ] = useState('');
 
@@ -47,15 +48,18 @@ const Tasks = () => {
 				<CreateTaskFormModal onSubmit={ handleSubmitCreateTaskForm } />
 			</div>
 			<Block>
+				{
+					loading === TASKS_LOADING_STATE.ERROR ? <p style={ { color: 'red', textAlign: 'center' } }>{ errorMessage ? errorMessage : 'An error occured.' }</p> : null
+				}
 				<Tabs
 					tabs={ tabs }
 					defaultActiveTabId={ 0 }
 					renderContent={
 						({ activeTabId }) => (
 							<>
-								{ activeTabId === 0 && <AllFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } /> }
-								{ activeTabId === 1 && <TodoFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } />}
-								{ activeTabId === 2 && <CompletedFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } /> }
+								{ activeTabId === 0 && <AllFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } isLoading={ loading === TASKS_LOADING_STATE.PENDING } /> }
+								{ activeTabId === 1 && <TodoFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } isLoading={ loading === TASKS_LOADING_STATE.PENDING } />}
+								{ activeTabId === 2 && <CompletedFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } isLoading={ loading === TASKS_LOADING_STATE.PENDING } /> }
 							</>
 						)
 					}
