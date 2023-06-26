@@ -35,7 +35,7 @@ cd react-master-todo-list
 Accède à la branche de l'exercice en exécutant la commande:
 
 ```bash
-git switch ex12/exercise
+git switch ex13/exercise
 ```
 
 Puis installes les dépendances avec la commande:
@@ -54,7 +54,7 @@ Tu l'aura compris, le but de cet exercice est de faire en sorte que les tâches 
 
 Une fois ces tâches sauvegardées, nous pourrons ensuite les récupérer pour les afficher, réaliser des mises à jour dessus et éventuellement les supprimer.
 
-Toutes ces fonctionnalités sont mises à disposition par l'API.
+Toutes ces fonctionnalités sont mises à disposition par l'API. Il y a d'ailleurs déjà des tâches enregistrées dans la base de données de l'API.
 
 À toi de t'imprégner de la documentation fournie et d'effectuer tes recherches pour mener à bien cet exercice.
 
@@ -71,7 +71,3 @@ Toutes ces fonctionnalités sont mises à disposition par l'API.
 Bon courage ! 💪
 
 ## Correction
-
-Tu peux consulter la correction écrite ici: <https://github.com/Atomic-React/react-master-todo-list/tree/ex13/correction#correction>
-
-Ou suivre la correction en vidéo ici: _Bientôt disponible_
