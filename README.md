@@ -46,14 +46,19 @@ npm install
 
 Tu peux maintenant te rendre sur l'URL <http://localhost:5173>.
 
-<details>
- <summary>💡 <b>Indice</b></summary>
+Cet exercice va se dérouler en deux temps.
 
- > C'est le composant `App` qui détient l'état des tâches et la logique de mise à jour et de suppression.
- >
- > `App` va donc partager ces fonctionnalités au contexte pour que le context puisse à son tour les partager avec les composants enfants qui le demanderont
+D'abord, tu va devoir modifier le composant du contexte des tâches pour qu'il utilise `useReducer` à la place de `useState`.
 
-</details>
+`useReducer` joue le même rôle que `useState`, il permet d'interagir avec l'état d'un composant. Cependant, `useReducer` permet de gérer des états plus complexes de part les fonctionnalités qu'il propose.
+
+Je te laisse découvrir cela en te rendant sur la documentation de **React**: <https://react.dev/reference/react/useReducer>
+
+Ensuite, il faudra que tu rajoutes des compteurs de tâches comme affichés ci-dessous sur les boutons des onglets:
+
+![tasks counters](docs/tasks_counters.png)
+
+Tu as donc trois compteurs différents à ajouter. Tous doivent être gérés via le `useReducer` et doivent se mettre à jour automatiquement suite à l'ajout, la suppression ou la modification d'une tâche.
 
 Bon courage ! 💪
 
@@ -268,3 +273,143 @@ const TasksContextProvider = ({ children }) => {
 	);
 };
 ```
+
+Le `state` est maintenant délégué au `reducer`, nous allons pouvoir compléter les actions et rajouter la prise en charge des compteurs en créant une nouvelle action dédiée:
+
+```jsx
+const tasksReducer = (state, action) => {
+
+	switch (action.type) {
+		// ...
+		case 'tasks/updateCounters':
+			return {
+				...state,
+				allTasksCount: state.tasks.length,
+				todoTasksCount: state.tasks.filter(task => !task.isDone).length,
+				completedTasksCount: state.tasks.filter(task => task.isDone).length,
+			}
+		default:
+			return state;
+	}
+};
+
+export default tasksReducer;
+```
+
+Nous pouvons maintenant appeler cette action dans chacune des fonction du context. Il faut également penser à placer en valeur du contexte les trois compteurs:
+
+```jsx
+const TasksContextProvider = ({ children }) => {
+
+	const [ tasksState, dispatchTasksAction ] = useReducer(tasksReducer, INITIAL_TASKS_STATE_VALUE);
+
+	const createTask = (newTask) => {
+		const idsList = tasksState.tasks.map(({ id }) => id);
+		const newId = generateMaxId(idsList);
+		dispatchTasksAction({
+			type: 'tasks/create',
+			payload: {
+				isDone: false,
+				...newTask,
+				id: newId,
+				created_at: new Date(),
+			},
+		});
+		dispatchTasksAction({ type: 'tasks/updateCounters' }); // ICI
+	};
+
+	const deleteTask = (taskId) => {
+		dispatchTasksAction({
+			type: 'tasks/delete',
+			payload: taskId,
+		});
+		dispatchTasksAction({ type: 'tasks/updateCounters' }); // ICI
+	};
+
+	const updateTask = (taskToUpdate) => {
+		dispatchTasksAction({
+			type: 'tasks/update',
+			payload: taskToUpdate,
+		});
+		dispatchTasksAction({ type: 'tasks/updateCounters' }); // ICI
+	};
+
+	const contextValue = {
+		tasks: tasksState.tasks,
+		// Les compteurs ajoutés en valeur du contexte
+		allTasksCount: tasksState.allTasksCount,
+		todoTasksCount: tasksState.todoTasksCount,
+		completedTasksCount: tasksState.completedTasksCount,
+		createTask,
+		deleteTask,
+		updateTask,
+	};
+
+	return (
+		<TasksContext.Provider value={contextValue}>
+			{ children }
+		</TasksContext.Provider>
+	);
+};
+```
+
+Nous avons tout à fait le droit d'appeler plusieurs `dispatch` d'affilé. **React** va les regrouper pour faire une mise à jour commune en une seule fois pour optimiser les re-rendus.
+
+Nous pouvons maintenant récupérer les compteurs dans le composant `Tasks`, les afficher dans les boutons des onglets et tester:
+
+```jsx
+const Tasks = () => {
+
+	const { tasks, allTasksCount, todoTasksCount, completedTasksCount, createTask } = useTasksContext();
+
+	const [ searchTaskValue, setSearchTaskValue ] = useState('');
+
+	const tabs = [
+		{
+			id: 0,
+			title: `All (${ allTasksCount })`,
+		},
+		{
+			id: 1,
+			title: `Todo (${ todoTasksCount })`,
+		},
+		{
+			id: 2,
+			title: `Completed (${ completedTasksCount} )`,
+		},
+	];
+
+	const handleSubmitCreateTaskForm = (values) => createTask(values);
+
+	const handleSearchTask = (value) => {
+		setSearchTaskValue(value);
+	};
+
+	return (
+		<div className="container">
+			<h1 className="text--primary">Todo</h1>
+			<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
+				<InputSearch label="Search a task" placeholder="Search..." onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
+				<CreateTaskFormModal onSubmit={ handleSubmitCreateTaskForm } />
+			</div>
+			<Block>
+				<Tabs
+					tabs={ tabs }
+					defaultActiveTabId={ 0 }
+					renderContent={
+						({ activeTabId }) => (
+							<>
+								{ activeTabId === 0 && <AllFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } /> }
+								{ activeTabId === 1 && <TodoFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } />}
+								{ activeTabId === 2 && <CompletedFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } /> }
+							</>
+						)
+					}
+				/>
+			</Block>
+		</div>
+	);
+};
+```
+
+Tout devrait fonctionner ! 👏

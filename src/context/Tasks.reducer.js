@@ -2,7 +2,6 @@ const tasksReducer = (state, action) => {
 
 	switch (action.type) {
 		case 'tasks/create':
-			console.log('tasks/create', state);
 			return {
 				...state,
 				tasks: [
@@ -28,9 +27,17 @@ const tasksReducer = (state, action) => {
 				...state,
 				tasks: state.tasks.filter(task => task.id !== action.payload),
 			};
+		case 'tasks/updateCounters':
+			return {
+				...state,
+				allTasksCount: state.tasks.length,
+				todoTasksCount: state.tasks.filter(task => !task.isDone).length,
+				completedTasksCount: state.tasks.filter(task => task.isDone).length,
+			}
 		default:
 			return state;
 	}
 };
 
 export default tasksReducer;
+

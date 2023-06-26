@@ -5,6 +5,9 @@ import tasksReducer from './Tasks.reducer';
 
 export const TasksContext = createContext({
 	tasks: [],
+	allTasksCount: 0,
+	todoTasksCount: 0,
+	completedTasksCount: 0,
 	createTask: (newTask) => newTask,
 	deleteTask: (taskId) => taskId,
 	updateTask: (taskToUpdate) => taskToUpdate,
@@ -44,6 +47,7 @@ const TasksContextProvider = ({ children }) => {
 				created_at: new Date(),
 			},
 		});
+		dispatchTasksAction({ type: 'tasks/updateCounters' });
 	};
 
 	const deleteTask = (taskId) => {
@@ -51,6 +55,7 @@ const TasksContextProvider = ({ children }) => {
 			type: 'tasks/delete',
 			payload: taskId,
 		});
+		dispatchTasksAction({ type: 'tasks/updateCounters' });
 	};
 
 	const updateTask = (taskToUpdate) => {
@@ -58,10 +63,14 @@ const TasksContextProvider = ({ children }) => {
 			type: 'tasks/update',
 			payload: taskToUpdate,
 		});
+		dispatchTasksAction({ type: 'tasks/updateCounters' });
 	};
 
 	const contextValue = {
 		tasks: tasksState.tasks,
+		allTasksCount: tasksState.allTasksCount,
+		todoTasksCount: tasksState.todoTasksCount,
+		completedTasksCount: tasksState.completedTasksCount,
 		createTask,
 		deleteTask,
 		updateTask,

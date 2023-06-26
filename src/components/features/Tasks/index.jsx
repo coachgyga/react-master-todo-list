@@ -14,22 +14,22 @@ const CompletedFilteredTasksTable = withFilteredTasks(TasksTable, ({ tasks, sear
 
 const Tasks = () => {
 
-	const { tasks, createTask } = useTasksContext();
+	const { tasks, allTasksCount, todoTasksCount, completedTasksCount, createTask } = useTasksContext();
 
 	const [ searchTaskValue, setSearchTaskValue ] = useState('');
 
 	const tabs = [
 		{
 			id: 0,
-			title: 'All (n)',
+			title: `All (${ allTasksCount })`,
 		},
 		{
 			id: 1,
-			title: 'Todo (n)',
+			title: `Todo (${ todoTasksCount })`,
 		},
 		{
 			id: 2,
-			title: 'Completed (n)',
+			title: `Completed ( ${completedTasksCount} )`,
 		},
 	];
 
