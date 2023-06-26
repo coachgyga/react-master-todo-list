@@ -16,5 +16,9 @@ export const generateDummyTasks = (numberOfTasks = 0) => {
 };
 
 export const getSearchedTasks = (tasks = [], searchValue = '') => {
-	return tasks.filter(task => task.title.toLowerCase().includes(searchValue.toLowerCase()))
-}
+	return tasks.filter(task => {
+		if (task.title) {
+			return task.title.toLowerCase().includes(searchValue.toLowerCase())
+		}
+	});
+};

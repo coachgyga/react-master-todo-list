@@ -1,9 +1,17 @@
 const apiURL = 'http://localhost:3000';
 
+const wait = (delay = 3000) => new Promise((resolve) => {
+	setTimeout(() => resolve(), delay);
+});
+
 export const getTasks = async () => {
 	try {
+		await wait();
 		const response = await fetch(`${apiURL}/tasks`);
 		const json = await response.json();
+		if (!response.ok) {
+			throw new Error(json.error);
+		}
 		return json;
 	} catch (error) {
 		console.error(error);
@@ -21,6 +29,9 @@ export const createTask = async (taskToCreate) => {
 			},
 		});
 		const json = await response.json();
+		if (!response.ok) {
+			throw new Error(json.error);
+		}
 		return json;
 	} catch (error) {
 		console.error(error);
@@ -38,6 +49,9 @@ export const updateTask = async (taskToUpdate) => {
 			},
 		});
 		const json = await response.json();
+		if (!response.ok) {
+			throw new Error(json.error);
+		}
 		return json;
 	} catch (error) {
 		console.error(error);
@@ -51,6 +65,9 @@ export const deleteTask = async (taskIdToDelete) => {
 			method: 'DELETE',
 		});
 		const json = await response.json();
+		if (!response.ok) {
+			throw new Error(json.error);
+		}
 		return json;
 	} catch (error) {
 		console.error(error);
