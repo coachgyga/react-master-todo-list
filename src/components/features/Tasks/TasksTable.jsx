@@ -1,6 +1,6 @@
 import './Tasks.css';
 
-import { arrayOf, shape, string, number, instanceOf, bool } from 'prop-types';
+import { arrayOf, shape, string, bool } from 'prop-types';
 import TaskRow from './TaskRow';
 
 const TasksTable = ({ tasks, isLoading }) => {
@@ -33,10 +33,10 @@ export default TasksTable;
 
 TasksTable.propTypes = {
 	tasks: arrayOf(shape({
-		id: number.isRequired,
+		id: string.isRequired,
 		title: string.isRequired,
 		isDone: bool.isRequired,
-		created_at: instanceOf(Date).isRequired,
+		createdAt: string.isRequired,
 	})),
 	isLoading: bool,
 };

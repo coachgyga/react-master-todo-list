@@ -1,7 +1,14 @@
+import { CREATE_TASK_ACTION, DELETE_TASK_ACTION, SET_TASKS_ACTION, UPDATE_TASKS_COUNTERS_ACTION, UPDATE_TASK_ACTION } from './Tasks.actions';
+
 const tasksReducer = (state, action) => {
 
 	switch (action.type) {
-		case 'tasks/create':
+		case SET_TASKS_ACTION:
+			return {
+				...state,
+				tasks: action.payload,
+			};
+		case CREATE_TASK_ACTION:
 			return {
 				...state,
 				tasks: [
@@ -9,7 +16,7 @@ const tasksReducer = (state, action) => {
 					action.payload
 				],
 			};
-		case 'tasks/update':
+		case UPDATE_TASK_ACTION:
 			return {
 				...state,
 				tasks: state.tasks.map(task => {
@@ -22,12 +29,12 @@ const tasksReducer = (state, action) => {
 					return task;
 				}),
 			};
-		case 'tasks/delete':
+		case DELETE_TASK_ACTION:
 			return {
 				...state,
 				tasks: state.tasks.filter(task => task.id !== action.payload),
 			};
-		case 'tasks/updateCounters':
+		case UPDATE_TASKS_COUNTERS_ACTION:
 			return {
 				...state,
 				allTasksCount: state.tasks.length,

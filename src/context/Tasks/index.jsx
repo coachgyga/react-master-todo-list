@@ -1,7 +1,8 @@
 import { node } from 'prop-types';
-import { createContext, useContext, useReducer } from 'react';
-import { generateMaxId } from '../utils/id.util';
+import { createContext, useEffect, useReducer } from 'react';
 import tasksReducer from './Tasks.reducer';
+import { getTasks, createTask as createTaskRequest, updateTask as updateTaskRequest, deleteTask as deleteTaskRequest } from '../../services/tasks.service';
+import { CREATE_TASK_ACTION, DELETE_TASK_ACTION, SET_TASKS_ACTION, UPDATE_TASKS_COUNTERS_ACTION, UPDATE_TASK_ACTION } from './Tasks.actions';
 
 export const TasksContext = createContext({
 	tasks: [],
@@ -12,17 +13,6 @@ export const TasksContext = createContext({
 	deleteTask: (taskId) => taskId,
 	updateTask: (taskToUpdate) => taskToUpdate,
 });
-
-export const useTasksContext = () => {
-	const context = useContext(TasksContext);
-	if (context === null) {
-		throw new Error('useTasksContext is null');
-	}
-	if (context === undefined) {
-		throw new Error('useTasksContext was used outside of its Provider');
-	}
-	return context;
-};
 
 const INITIAL_TASKS_STATE_VALUE = {
 	tasks: [],
@@ -35,35 +25,43 @@ const TasksContextProvider = ({ children }) => {
 
 	const [ tasksState, dispatchTasksAction ] = useReducer(tasksReducer, INITIAL_TASKS_STATE_VALUE);
 
-	const createTask = (newTask) => {
-		const idsList = tasksState.tasks.map(({ id }) => id);
-		const newId = generateMaxId(idsList);
+	useEffect(() => {
+		getTasks()
+		.then(data => {
+			dispatchTasksAction({
+				type: SET_TASKS_ACTION,
+				payload: data.rows,
+			});
+			dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
+		})
+		.catch(console.error);
+	}, []);
+
+	const createTask = async (newTask) => {
+		const createdTask = await createTaskRequest(newTask);
 		dispatchTasksAction({
-			type: 'tasks/create',
-			payload: {
-				isDone: false,
-				...newTask,
-				id: newId,
-				created_at: new Date(),
-			},
+			type: CREATE_TASK_ACTION,
+			payload: createdTask,
 		});
-		dispatchTasksAction({ type: 'tasks/updateCounters' });
+		dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
 	};
 
-	const deleteTask = (taskId) => {
+	const deleteTask = async (taskId) => {
+		await deleteTaskRequest(taskId);
 		dispatchTasksAction({
-			type: 'tasks/delete',
+			type: DELETE_TASK_ACTION,
 			payload: taskId,
 		});
-		dispatchTasksAction({ type: 'tasks/updateCounters' });
+		dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
 	};
 
-	const updateTask = (taskToUpdate) => {
+	const updateTask = async (taskToUpdate) => {
+		await updateTaskRequest(taskToUpdate);
 		dispatchTasksAction({
-			type: 'tasks/update',
+			type: UPDATE_TASK_ACTION,
 			payload: taskToUpdate,
 		});
-		dispatchTasksAction({ type: 'tasks/updateCounters' });
+		dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
 	};
 
 	const contextValue = {

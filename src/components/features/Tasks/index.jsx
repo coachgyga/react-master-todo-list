@@ -4,7 +4,7 @@ import InputSearch from '../../forms/InputSearch';
 import Block from '../../ui/Block';
 import Tabs from '../../ui/Tabs';
 import withFilteredTasks from './HOCs/withFilteredTasks';
-import { useTasksContext } from '../../../context/Tasks.context';
+import useTasksContext from '../../../context/Tasks/useTasksContext';
 import TasksTable from './TasksTable';
 import CreateTaskFormModal from './CreateTaskFormModal';
 

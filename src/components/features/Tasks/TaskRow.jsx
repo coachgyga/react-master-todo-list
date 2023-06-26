@@ -1,4 +1,4 @@
-import { string, instanceOf, bool, number } from 'prop-types';
+import { string, bool } from 'prop-types';
 import Button from '../../ui/Button';
 import { useState } from 'react';
 import { useRef } from 'react';
@@ -6,9 +6,9 @@ import { useEffect } from 'react';
 import InputText from '../../forms/InputText';
 import DeleteTaskConfirmModal from './DeleteTaskConfirmModal';
 import Checkbox from '../../forms/Checkbox';
-import { useTasksContext } from '../../../context/Tasks.context';
+import useTasksContext from '../../../context/Tasks/useTasksContext';
 
-const TaskRow = ({ id, title, created_at, isDone }) => {
+const TaskRow = ({ id, title, createdAt, isDone }) => {
 
 	const { updateTask, deleteTask } = useTasksContext();
 
@@ -57,7 +57,7 @@ const TaskRow = ({ id, title, created_at, isDone }) => {
 					: <span role="button" onClick={ handleEditTitle }>{ title }</span>
 				}
 			</td>
-			<td>{ created_at.toLocaleDateString() }</td>
+			<td>{ new Date(createdAt).toLocaleDateString() }</td>
 			<td><Checkbox value={ isDone } onChange={ handleSwitchCompletedTask } useCheckedAsValue /></td>
 			<td>
 				<DeleteTaskConfirmModal onConfirm={ handleDeleteTask } />
@@ -69,9 +69,9 @@ const TaskRow = ({ id, title, created_at, isDone }) => {
 export default TaskRow;
 
 TaskRow.propTypes = {
-	id: number.isRequired,
+	id: string.isRequired,
 	title: string.isRequired,
-	created_at: instanceOf(Date).isRequired,
+	createdAt: string.isRequired,
 	isDone: bool,
 };
 
