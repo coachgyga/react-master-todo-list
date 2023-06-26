@@ -1,8 +1,4 @@
-# ⚛️ React Master - Todo list: Manipuler les tâches via une API (Correction)
-
-Dans cet énoncé tu trouvra:
-
-1 💡 indice
+# ⚛️ React Master - Todo list: Gérer l'état d'erreur et l'état de chargement (Exercice)
 
 ## Sommaire
 
@@ -35,7 +31,7 @@ cd react-master-todo-list
 Accède à la branche de l'exercice en exécutant la commande:
 
 ```bash
-git switch ex13/exercise
+git switch ex14/exercise
 ```
 
 Puis installes les dépendances avec la commande:
@@ -112,20 +108,18 @@ export const getTasks = async () => {
 };
 ```
 
-Pendant le chargement, tu devra afficher le message _"Loading..."_ à la place du tableau des tâches:
+Pendant le chargement, tu devra afficher le message _"Loading data..."_ à la place du tableau des tâches:
 
-![tasks loading]()
+![tasks loading](docs/tasks_loading.png)
 
-<details>
- <summary>💡 indice</summary>
+Rappelle toi qu'il y a un moment maintenant, nous avions ajouté une propriétés `isLoading` sur le composant `TasksTable`. Tu peux certainement t'en servir ! Je te laisse regarder ça.
 
- > Pour charger la valeur initiale des tâches depuis l'API, tu peux effectuer ta requête dans un `useEffect` dans le composant `TasksContextProvider`.
- >
- > Tu peux ensuite dispatcher le résultat de la requête dans le `state` via une action.
- >
- > Tu aura certainement besoin d'adapter le reducer pour pouvoir mettre à jour le `state`
-</details>
+Comme pour l'état d'erreur, tu devra utiliser le `reducer` du contexte et certainement créer une action pour l'état de chargement.
 
 Bon courage ! 💪
 
 ## Correction
+
+Tu peux consulter la correction écrite ici: <https://github.com/Atomic-React/react-master-todo-list/tree/ex14/correction#correction>
+
+Ou suivre la correction en vidéo ici: _Bientôt disponible_
