@@ -29,7 +29,7 @@ const Tasks = () => {
 		},
 		{
 			id: 2,
-			title: `Completed ( ${completedTasksCount} )`,
+			title: `Completed (${ completedTasksCount} )`,
 		},
 	];
 
