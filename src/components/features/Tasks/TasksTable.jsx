@@ -23,7 +23,7 @@ const TasksTable = ({ tasks, isLoading }) => {
 					}
 				</tbody>
 			</table>
-			{ !tasks || tasks.length === 0 && <p style={{ textAlign: 'center' }}>No data</p>}
+			{ !tasks || tasks.length === 0 && !isLoading && <p style={{ textAlign: 'center' }}>No data</p>}
 			{ isLoading && <p style={{ textAlign: 'center' }}>Loading data...</p>}
 		</>
 	);
