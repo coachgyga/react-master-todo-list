@@ -54,7 +54,7 @@ Tu l'aura compris, le but de cet exercice est de faire en sorte que les tâches 
 
 Une fois ces tâches sauvegardées, nous pourrons ensuite les récupérer pour les afficher, réaliser des mises à jour dessus et éventuellement les supprimer.
 
-Toutes ces fonctionnalités sont mises à disposition par l'API.
+Toutes ces fonctionnalités sont mises à disposition par l'API. Il y a d'ailleurs déjà des tâches enregistrées dans la base de données de l'API.
 
 À toi de t'imprégner de la documentation fournie et d'effectuer tes recherches pour mener à bien cet exercice.
 
