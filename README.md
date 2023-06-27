@@ -80,6 +80,8 @@ Le but du jeu, c'est que cette bordure n'apparaisse plus autour du bouton `Delet
 
 Pour réaliser cela, jète un oeil à la fonction `memo`: <https://react.dev/reference/react/memo>
 
+Attention! Il est possible que tu aies besoin de rafraichir ta page pour que **React Dev Tools** se rafraichisse aussi.
+
 <details>
  <summary>💡 <b>Indice</b></summary>
 
