@@ -222,27 +222,3 @@ const handleDeleteTask = useCallback(() => {
 	deleteTask(id);
 }, []);
 ```
-
-Un dernier mot quand à l'utilisation de `memo`, et c'est valable pour `useCallback` et `useMemo`:
-
-Ces fonctionnalités mises à disposition par **React** ne sont à utiliser qu'en cas de nécessité.
-
-En clair, si tu te pose la question suivante: "Dois-je utiliser `memo` sur tous mes composants, `useCallback` sur toutes mes fonctions pour optimiser mon application ?"
-
-La réponse est à **NON** !
-
-Si ton application ne comporte pas de problèmes de performances ou de latence dans l'interface, alors inutile d'ajouter `memo`, `useCallback` ou `useMemo`. Cela pourrait avoir l'effet totalement inverse.
-
-Effectivement, ces fonctionnalités font des comparaisons à chaque re-rendu pour savoir si elles doivent re-rendre leur composant ou leur fonction.
-
-Ces comparaisons peuvent être couteuses en performances et causer des problèmes si leur utilisation est abusive.
-
-On utilise `memo` seulement lorsque cela vaut vraiment le coût, seulement lorsqu'un composant pose d'importants problèmes de performances.
-
-Si tu places ton `state` au bon endroit et que tu gères bien le découpage de tes composants, alors tu utilisera très rarement `memo`.
-
-Sauf si tu développes une application avec énormément de re-rendus, comme une application de dessins, de diagrams ou des applications collaboratives par exemple.
-
-Ce genre d'application doit suivre différents états en temps réel qui changent vraiment très souvent. Parfois, plusieurs fois par seconde. C'est ici que l'utilisation de `memo` peut être pertinente. Mais cela doit se réfléchir au préalable.
-
-C'est valable pour la majorité des concepts que nous allons voir dans ce module.
