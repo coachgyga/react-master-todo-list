@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import Button from '../../ui/Button';
 import Modal from '../../ui/Modal';
 import { func } from 'prop-types';
@@ -37,7 +37,12 @@ const DeleteTaskConfirmationModal = ({ onConfirm }) => {
 	);
 };
 
-export default DeleteTaskConfirmationModal;
+export default memo(DeleteTaskConfirmationModal, (prevProps, nextProps) => {
+	if (prevProps.onConfirm === nextProps.onConfirm) {
+		return true;
+	}
+	return false;
+});
 
 DeleteTaskConfirmationModal.propTypes = {
 	onConfirm: func,

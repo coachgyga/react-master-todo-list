@@ -80,6 +80,8 @@ Le but du jeu, c'est que cette bordure n'apparaisse plus autour du bouton `Delet
 
 Pour réaliser cela, jète un oeil à la fonction `memo`: <https://react.dev/reference/react/memo>
 
+Attention! Il est possible que tu aies besoin de rafraichir ta page pour que **React Dev Tools** se rafraichisse aussi.
+
 <details>
  <summary>💡 <b>Indice</b></summary>
 
@@ -103,6 +105,57 @@ Bon courage ! 💪
 
 ## Correction
 
-Tu peux consulter la correction écrite ici: <https://github.com/Atomic-React/react-master-todo-list/tree/ex15/correction#correction>
+Le composant concerné par le re-rendu n'est pas le bouton `Delete` mais plutôt le composant `DeleteTaskConfirmationModal`.
 
-Ou suivre la correction en vidéo ici: _Bientôt disponible_
+C'est donc celui-ci que nous devons mémoiser.
+
+Pour cela, nous pouvons utiliser `memo` au moment d'exporter le composant comme ceci:
+
+```JSX
+export default memo(DeleteTaskConfirmationModal); // memo est à importer depuis 'react'
+```
+
+`memo` va maintenant comparer la valeur actuelle des `props` de `DeleteTaskConfirmationModal` avec la "nouvelle" valeur.
+
+En fait, lorsque le composant parent (`TaskRow`) est re-rendu, il donne l'ordre à ses enfants de se re-rendre également.
+
+`memo` ayant détecté cet ordre de re-rendu, il va voir si les `props` ont changé entre temps.
+
+Par défaut, **React** re-rend tous les composants au moindre changement d'état.
+
+`memo` va interrompre ce comportement par défaut et vérifier si les valeurs des `props` ont changé. Si c'est le cas, il re-rend le composant, sinon, il ne re-rend pas.
+
+Cependant, dans la configuration actuelle, nous avons beau avoir ajouté `memo`, le composant se re-rend quand même.
+
+Cela s'explique par le fait que `DeleteTaskConfirmationModal` reçois la propriété `onConfirm` qui a pour valeur une fonction. Même si cette fonction n'a pas changé de valeur, `memo` est incapable de comparer des fonctions. Il est tout aussi incapable de comparer des objets et des tableaux.
+
+En fait, il ne fait qu'une comparaison simple sur des valeurs primitives comme les nombres ou les chaînes de caractères.
+
+Nous avons deux solutions possibles pour corriger cela:
+
+*   Soit faire nous même la comparaison pour indiquer à `memo` quand il doit re-rendre le composant et quand il ne doit pas le faire
+*   Mémoiser la fonction passée en valeur de `onConfirm`
+
+Essayons d'abord la première méthode.
+
+La fonction `memo` peut prendre un deuxième argument: une fonction mettant à disposition la valeur précédente et la nouvelle valeur des `props`.
+
+```JSX
+export default memo(DeleteTaskConfirmationModal, (prevProps, nextProps) => {
+	
+});
+```
+
+Chacun de ces arguments est un objet contenant respectivement les `props` passées à `DeleteTaskConfirmationModal` avant la demande de mise à jour (`prevProps`) et après la demande de mise à jour (`nextProps`).
+
+Nous pouvons donc récupérer les valeurs de `onConfirm` et les comparer comme ceci:
+
+```JSX
+export default memo(DeleteTaskConfirmationModal, (prevProps, nextProps) => {
+	// Si `onConfirm` des props précédentes est égale à `onConfirm` des nouvelles props
+	if (prevProps.onConfirm === nextProps.onConfirm) {
+		return true; // Oui, on mémoise le composant (on ne le re-rend pas)
+	}
+	return false; // Non, on ne mémoise pas le composant (on le re-rend)
+});
+```
