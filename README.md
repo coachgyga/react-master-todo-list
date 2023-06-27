@@ -1,4 +1,4 @@
-# ⚛️ React Master - Todo list: Mémoiser un composant (Exercice)
+# ⚛️ React Master - Todo list: Mémoiser un composant (Correction)
 
 ## Sommaire
 
