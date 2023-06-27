@@ -102,3 +102,7 @@ Pour réaliser cela, jète un oeil à la fonction `memo`: <https://react.dev/ref
 Bon courage ! 💪
 
 ## Correction
+
+Tu peux consulter la correction écrite ici: <https://github.com/Atomic-React/react-master-todo-list/tree/ex15/correction#correction>
+
+Ou suivre la correction en vidéo ici: _Bientôt disponible_
