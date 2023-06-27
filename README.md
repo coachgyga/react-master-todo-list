@@ -9,8 +9,8 @@
 
 ## Notions de l'exercice
 
-*   Context
-*   Reducer
+*   `memo`
+*   `useCallback`
 
 ## Consignes
 
