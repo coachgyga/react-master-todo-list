@@ -16,13 +16,13 @@ const CreateTaskFormModal = ({ onSubmit }) => {
 
 	const validateForm = () => {
 		let errors;
-		// const { title } = formValue;
-		// if (title.length < 3) {
-		// 	errors = {
-		// 		...errors,
-		// 		title: 'The task title must contain at least 3 characters.',
-		// 	};
-		// }
+		const { title } = formValue;
+		if (title.length < 3) {
+			errors = {
+				...errors,
+				title: 'The task title must contain at least 3 characters.',
+			};
+		}
 		setValidationsErrors(errors);
 		return errors;
 	};

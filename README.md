@@ -1,4 +1,4 @@
-# ⚛️ React Master - Todo list: Gérer l'état d'erreur et l'état de chargement (Correction)
+# ⚛️ React Master - Todo list: Mémoiser un composant (Exercice)
 
 ## Sommaire
 
@@ -31,7 +31,7 @@ cd react-master-todo-list
 Accède à la branche de l'exercice en exécutant la commande:
 
 ```bash
-git switch ex14/exercise
+git switch ex15/exercise
 ```
 
 Puis installes les dépendances avec la commande:
@@ -42,299 +42,63 @@ npm install
 
 Tu peux maintenant te rendre sur l'URL <http://localhost:5173>.
 
-Pour cet exercice, tu vas devoir gérer l'état de chargement, et l'état d'erreur accompagné des messages d'erreurs éventuels.
+Il y a dans notre application des composants qui se re-rendent très souvent, à chaque mise à jour d'état, alors qu'ils n'en ont pas forcément besoin.
 
-J'ai apporté quelques modifications à l'application pour que tu puisses partir sur de meilleures bases.
+Par exemple, le bouton `Delete` de chaque tâche, une fois rendu n'a pas besoin de se re-rendre quand on coche la case _"Completed"_ ou quand on modifie le nom de la tâche.
 
-Tout d'abord, j'ai ajouté la récupération des messages d'erreurs dans les fonction de `tasks.service.js`.
+Le bouton `Delete` ne change pas d'état: Il s'appelle toujours `Delete` et la fonction de confirmation liée à la modale contient toujours la même valeur.
 
-C'est ce code ci que tu vois dans chaque fonction:
+Je t'invite à ouvrir ta console et à te rendre sur l'onglet **⚛️ Components**.
 
-```JSX
-if (!response.ok) {
-	throw new Error(json.error);
-}
-```
+Clique sur la roue dentée en haut à droite pour ouvrir les paramètres:
 
-Cela te servira pour récupérer les messages d'erreurs.
+![react dev tools gear](docs/react_dev_tools/react_dev_tools_gear.png)
 
-J'ai aussi commenté une partie de la fonction `validateForm` qui se trouve dans le composant `CreateTaskFormModal`:
+Puis coche la case _"Highlight updates when components render."_ dans l'onglet _"General"_:
 
-```JSX
-const validateForm = () => {
-	let errors;
-	// const { title } = formValue;
-	// if (title.length < 3) {
-	// 	errors = {
-	// 		...errors,
-	// 		title: 'The task title must contain at least 3 characters.',
-	// 	};
-	// }
-	setValidationsErrors(errors);
-	return errors;
-};
-```
+![react dev tools highlight render](docs/react_dev_tools/react_dev_tools_highlight_render.png)
 
-De cette façon, tu pourra tester plus facilement le cas d'erreur avec un exemple accessible directement.
+Ce paramètre va te permettre de mettre évidence les re-rendus de tes composants. (Tu pourra le désactiver plus tard)
 
-Comme il n'y a plus de validation du champ "titre", tu vas pouvoir envoyer un titre vide à l'API. Sauf que l'API n'aime pas ça, elle te renverra un message d'erreur que tu devra traiter et afficher comme tu peux le voir ci-dessous:
+À chaque fois qu'un composant se re-rendra, une bordure apparaîtra brièvement autour de ce composant.
 
-![tasks api error](docs/tasks_error_api.png)
+Par exemple, le composant `DeleteTaskConfirmationModal` se re-rend à chaque modification d'une tâche:
 
-Ce message d'erreur devra forcément passer par l'état du contexte puisque c'est dans le composant du contexte que les requêtes API sont effectuées. Cela veut dire que tu as certainement besoin de toucher au `reducer` pour créer des actions supplémentaires.
+![tasks render delete button](docs/tasks_render_delete_button.png)
 
-Il faudra aussi que tu gère l'état de chargement.
+Dans une application telle que la nôtre, ce n'est pas grave du tout.
 
-Dans le service `tasks.service.js`, j'ai ajouté un temps de latence factice sur la requête des tâches:
+Dans une application dans laquelle il y aurait beaucoup de re-rendu, beaucoup de mises à jour de `state`, cela pourrait occasionner de lourds problèmes de performances.
 
-```JSX
-const wait = (delay = 3000) => new Promise((resolve) => {
-	setTimeout(() => resolve(), delay);
-});
+Tu va donc apprendre à _mémoiser_ des composants.
 
-export const getTasks = async () => {
-	try {
-		await wait(); // ICI => On attend 3 secondes que les tâches chargent
-		const response = await fetch(`${apiURL}/tasks`);
-		const json = await response.json();
-		if (!response.ok) {
-			throw new Error(json.error);
-		}
-		return json;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-};
-```
+Mémoiser ? Oui, et pas "mémoriser".
 
-Pendant le chargement, tu devra afficher le message _"Loading data..."_ à la place du tableau des tâches:
+La mémoisation consiste à dire à **React** de garder l'état d'un composant en mémoire et de le re-rendre que sous certaines conditions.
 
-![tasks loading](docs/tasks_loading.png)
+Le but du jeu, c'est que cette bordure n'apparaisse plus autour du bouton `Delete` à chaque fois que tu coches/décoches la case d'une tâche ou que tu modifies sont titre.
 
-Rappelle toi qu'il y a un moment maintenant, nous avions ajouté une propriétés `isLoading` sur le composant `TasksTable`. Tu peux certainement t'en servir ! Je te laisse regarder ça.
+Pour réaliser cela, jète un oeil à la fonction `memo`: <https://react.dev/reference/react/memo>
 
-Comme pour l'état d'erreur, tu devra utiliser le `reducer` du contexte et certainement créer une action pour l'état de chargement.
+<details>
+ <summary>💡 <b>Indice</b></summary>
+
+ > Si malgré l'utilisation de `memo` ton composant continue de ce re-rendre, c'est à cause de ses props.
+ >
+ > Tu dois déterminer laquelle de ses `props` induit un re-rendu du composant.
+ >
+ > Si tu as lu la documentation de `memo`, tu sais que `memo` compare la valeur actuelle des `props` et la nouvelle valeur des `props`. Si les deux valeurs son différentes, le composant est re-rendu.
+ >
+ > Trouve la `props` qui change de valeur ou la `props` dont la valeur n'est pas prise en charge par `memo` et traite la.
+ >
+ > Ces deux hooks peuvent t'être utiles:
+ >
+ > `useMemo`: <https://react.dev/reference/react/useMemo>
+ >
+ > `useCallback`: <https://react.dev/reference/react/useCallback>
+
+</details>
 
 Bon courage ! 💪
 
 ## Correction
-
-Commençons par le plus simple: l'état de chargement.
-
-Supposons que depuis le composant `Tasks`, grâce à `useTasksContext`, nous puissions récupérer une propriété `isLoading`:
-
-```JSX
-const { tasks, allTasksCount, todoTasksCount, completedTasksCount, createTask, isLoading } = useTasksContext();
-```
-
-Cette propriété serait transmise à `TasksTable` via la prop `isLoading`:
-
-```JSX
-<Tabs
-	tabs={ tabs }
-	defaultActiveTabId={ 0 }
-	renderContent={
-		({ activeTabId }) => (
-			<>
-				{ activeTabId === 0 && <AllFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } isLoading={ isLoading } /> }
-				{ activeTabId === 1 && <TodoFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } isLoading={ isLoading } />}
-				{ activeTabId === 2 && <CompletedFilteredTasksTable tasks={ tasks } searchValue={ searchTaskValue } isLoading={ isLoading } /> }
-			</>
-		)
-	}
-/>
-```
-
-Cette propriété serait dans la valeur initiale du `state` à `false` par défaut:
-
-```JSX
-const INITIAL_TASKS_STATE_VALUE = {
-	tasks: [],
-	allTasksCount: 0,
-	todoTasksCount: 0,
-	completedTasksCount: 0,
-	isLoading: false,
-};
-```
-
-Il faut alors l'ajouter à la valeur du contexte:
-
-```jsx
-const contextValue = {
-	tasks: tasksState.tasks,
-	allTasksCount: tasksState.allTasksCount,
-	todoTasksCount: tasksState.todoTasksCount,
-	completedTasksCount: tasksState.completedTasksCount,
-	isLoading: tasksState.isLoading, // ICI
-	createTask,
-	deleteTask,
-	updateTask,
-};
-```
-
-D'ailleurs pour ne plus avoir à s'embêter avec le fait d'inscrire chaque propriété du `state` en valeur du contexte, nous devrions procéder ainsi:
-
-```jsx
-const contextValue = {
-	...tasksState,
-	createTask,
-	deleteTask,
-	updateTask,
-};
-```
-
-Ce qui changerait la valeur de cette propriété `isLoading`, ça serait une action du `reducer` qui serait utilisée pour mettre `isLoading` à `true` au moment de faire la requête, puis à `false`, une fois la réponse reçue.
-
-```JSX
-dispatchTasksAction({ type: TASKS_SET_LOADING_ACTION, payload: true });
-getTasks()
-.then(data => {
-	dispatchTasksAction({
-		type: SET_TASKS_ACTION,
-		payload: data.rows,
-	});
-	dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
-	dispatchTasksAction({ type: TASKS_SET_LOADING_ACTION, payload: false });
-})
-.catch(console.error);
-```
-
-Ajoutons le nom de l'action dans `Tasks.actions.js`:
-
-```JSX
-const TASKS_SET_LOADING_ACTION = 'tasks/setLoading';
-```
-
-Puis ajoutons l'action dans le `reducer`:
-
-```JSX
-const tasksReducer = (state, action) => {
-
-	switch (action.type) {
-		// ...
-		case TASKS_SET_LOADING_ACTION:
-			return {
-				...state,
-				isLoading: action.payload,
-			};
-		default:
-			return state;
-	}
-};
-
-export default tasksReducer;
-```
-
-Ceci devrait fonctionner.
-
-Cependant, je n'ai pas que l'état de chargement à gérer; j'ai aussi l'état d'erreur.
-
-L'état d'erreur va avoir ses subtilités.
-
-Je sais que je vais devoir afficher un message d'erreur fourni par l'API dans le composant `Tasks` dans le `Block`.
-
-Imaginons qu'on récupère une propriété `error` depuis le contexte qui contiendrait un message d'erreur:
-
-```jsx
-const { tasks, allTasksCount, todoTasksCount, completedTasksCount, createTask, isLoading, error } = useTasksContext();
-```
-
-```JSX
-<Block>
-	{
-		error && <p style={ { color: 'red', textAlign: 'center' } }>{ error }</p>
-	}
-	{ /* ... */ }
-</Block>
-```
-
-Si `error` existe alors on affiche un paragraphe en rouge contenant le message d'erreur.
-
-Ajoutons l'action qui va permettre d'inscrire l'erreur dans le `state`:
-
-```jsx
-export const TASKS_SET_ERROR_ACTION = 'tasks/setError';
-```
-
-```jsx
-const tasksReducer = (state, action) => {
-
-	switch (action.type) {
-		// ...
-		case TASKS_SET_ERROR_ACTION:
-			return {
-				...state,
-				error: action.payload,
-				isLoading: false, // On remet l'état de isLoading à false en cas d'erreur
-			};
-		default:
-			return state;
-	}
-};
-
-export default tasksReducer;
-```
-
-Puis on l'appelle partout où c'est nécessaire dans le composant du contexte. C'est à dire à chaque fois qu'il y a une requête API, dans le `catch` de la requête:
-
-```jsx
-useEffect(() => {
-	dispatchTasksAction({ type: TASKS_SET_LOADING_ACTION, payload: true });
-	getTasks()
-	.then(data => {
-		dispatchTasksAction({
-			type: SET_TASKS_ACTION,
-			payload: data.rows,
-		});
-		dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
-		dispatchTasksAction({ type: TASKS_SET_LOADING_ACTION, payload: false });
-	})
-	.catch(error => {
-		dispatchTasksAction({ type: TASKS_SET_ERROR_ACTION, payload: error.message }); // ICI
-	});
-}, []);
-
-const createTask = async (newTask) => {
-	try {
-		const createdTask = await createTaskRequest(newTask);
-		dispatchTasksAction({
-			type: CREATE_TASK_ACTION,
-			payload: createdTask,
-		});
-		dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
-	} catch (error) {
-		dispatchTasksAction({ type: TASKS_SET_ERROR_ACTION, payload: error.message }); // ICI
-	}
-};
-
-const deleteTask = async (taskId) => {
-	try {
-		await deleteTaskRequest(taskId);
-		dispatchTasksAction({
-			type: DELETE_TASK_ACTION,
-			payload: taskId,
-		});
-		dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
-	} catch (error) {
-		dispatchTasksAction({ type: TASKS_SET_ERROR_ACTION, payload: error.message }); // ICI
-	}
-};
-
-const updateTask = async (taskToUpdate) => {
-	try {
-		await updateTaskRequest(taskToUpdate);
-		dispatchTasksAction({
-			type: UPDATE_TASK_ACTION,
-			payload: taskToUpdate,
-		});
-		dispatchTasksAction({ type: UPDATE_TASKS_COUNTERS_ACTION });
-	} catch (error) {
-		dispatchTasksAction({ type: TASKS_SET_ERROR_ACTION, payload: error.message }); // ICI
-	}
-};
-```
-
-Il n'y a plus qu'à tester en essayant par exemple, de créer une tâche sans titre. Tu verra que le message d'erreur apparaitra au dessus du tableau des tâches.
-
-Exercice terminé ! 👏
