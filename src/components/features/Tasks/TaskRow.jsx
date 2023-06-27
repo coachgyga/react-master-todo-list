@@ -1,6 +1,6 @@
 import { string, bool } from 'prop-types';
 import Button from '../../ui/Button';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import InputText from '../../forms/InputText';
@@ -41,9 +41,9 @@ const TaskRow = ({ id, title, createdAt, isDone }) => {
 		});
 	}
 
-	const handleDeleteTask = () => {
+	const handleDeleteTask = useCallback(() => {
 		deleteTask(id);
-	}
+	}, []);
 
 	return (
 		<tr>

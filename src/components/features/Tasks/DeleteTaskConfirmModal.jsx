@@ -37,12 +37,7 @@ const DeleteTaskConfirmationModal = ({ onConfirm }) => {
 	);
 };
 
-export default memo(DeleteTaskConfirmationModal, (prevProps, nextProps) => {
-	if (prevProps.onConfirm === nextProps.onConfirm) {
-		return true;
-	}
-	return false;
-});
+export default memo(DeleteTaskConfirmationModal);
 
 DeleteTaskConfirmationModal.propTypes = {
 	onConfirm: func,

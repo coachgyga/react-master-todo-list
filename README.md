@@ -159,3 +159,90 @@ export default memo(DeleteTaskConfirmationModal, (prevProps, nextProps) => {
 	return false; // Non, on ne mémoise pas le composant (on le re-rend)
 });
 ```
+
+Mais visiblement ça ne fonctionne pas...
+
+Cela est dû au fait que `onConfirm` a pour valeur une fonction et que nous ne pouvons pas comparer deux fonctions ainsi.
+
+Il y a une vidéo sur la chaîne YouTube d'**Atomic React** qui en parle: <https://youtu.be/P6RW8Vb1w5U>.
+
+Si nous voulons comparer ces fonctions, il faut les transformer en chaîne de caractères:
+
+```JSX
+export default memo(DeleteTaskConfirmationModal, (prevProps, nextProps) => {
+	if (prevProps.onConfirm.toString() === nextProps.onConfirm.toString()) {
+		return true;
+	}
+	return false;
+});
+```
+
+Et là ça fonctionne !
+
+Essayons la deuxième méthode, qui est plus simple et recommandée.
+
+Pour cela, je vais retirer toute la logique de comparaison de `memo`:
+
+```JSX
+export default memo(DeleteTaskConfirmationModal);
+```
+
+Cette méthode, c'est d'utiliser le hook `useCallback` sur la fonction passée en valeur de `onConfirm` dans le composant parent, c'est à dire dans le composant `TaskRow`.
+
+Cette fonction s'appelle `handleDeleteTask`, il faut encapsuler sa valeur avec `useCallback`:
+
+```JSX
+const handleDeleteTask = useCallback(() => { // useCallback est à importer depuis 'react'
+	deleteTask(id);
+}, []); // Il faut un tableau de dépendances
+```
+
+Tu remarques que comme pour `useEffect`, le hook `useCallback` demande un second argument qui a pour valeur un tableau de dépendances.
+
+`useCallback` est un hook permettant de mémoiser des fonctions. Ce qui est très utile dans notre cas actuel !
+
+Le tableau de dépendances de `useCallback` permet de lui indiquer quelles sont les valeurs dont il faut observer les changements pour mettre à jour la fonction dans le `useCallback`.
+
+Ici nous pourrions ajouter l'`id` par exemple:
+
+```JSX
+const handleDeleteTask = useCallback(() => {
+	deleteTask(id);
+}, [ id ]);
+```
+
+Dans ce cas, si la valeur de `id` change, `useCallback` va rafraichir la fonction, ce qui aura pour effet de re-rendre le composant `DeleteTaskConfirmationModal` qui reçoit cette fonction dans les `props`.
+
+Dans notre cas actuel, placer `id` dans le tableau de dépendances est inutile car `id` est unique et immuable.
+
+Il serait donc plus cohérent de laisser le tableau vide:
+
+```JSX
+const handleDeleteTask = useCallback(() => {
+	deleteTask(id);
+}, []);
+```
+
+Un dernier mot quand à l'utilisation de `memo`, et c'est valable pour `useCallback` et `useMemo`:
+
+Ces fonctionnalités mises à disposition par **React** ne sont à utiliser qu'en cas de nécessité.
+
+En clair, si tu te pose la question suivante: "Dois-je utiliser `memo` sur tous mes composants, `useCallback` sur toutes mes fonctions pour optimiser mon application ?"
+
+La réponse est à **NON** !
+
+Si ton application ne comporte pas de problèmes de performances ou de latence dans l'interface, alors inutile d'ajouter `memo`, `useCallback` ou `useMemo`. Cela pourrait avoir l'effet totalement inverse.
+
+Effectivement, ces fonctionnalités font des comparaisons à chaque re-rendu pour savoir si elles doivent re-rendre leur composant ou leur fonction.
+
+Ces comparaisons peuvent être couteuses en performances et causer des problèmes si leur utilisation est abusive.
+
+On utilise `memo` seulement lorsque cela vaut vraiment le coût, seulement lorsqu'un composant pose d'importants problèmes de performances.
+
+Si tu places ton `state` au bon endroit et que tu gères bien le découpage de tes composants, alors tu utilisera très rarement `memo`.
+
+Sauf si tu développes une application avec énormément de re-rendus, comme une application de dessins, de diagrams ou des applications collaboratives par exemple.
+
+Ce genre d'application doit suivre différents états en temps réel qui changent vraiment très souvent. Parfois, plusieurs fois par seconde. C'est ici que l'utilisation de `memo` peut être pertinente. Mais cela doit se réfléchir au préalable.
+
+C'est valable pour la majorité des concepts que nous allons voir dans ce module.
