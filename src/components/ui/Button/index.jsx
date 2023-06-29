@@ -1,3 +1,4 @@
+import './Button.css';
 import { node, oneOf } from 'prop-types';
 
 const Button = ({ variant, children, ...htmlButtonProps }) => {
