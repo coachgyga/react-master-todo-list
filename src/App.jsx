@@ -1,7 +1,7 @@
 import { useRef } from 'react';
-import Block from '../../todo-list/src/components/ui/Block';
+import Block from './components/ui/Block';
 import Tasks from './components/features/Tasks';
-import Button from '../../todo-list/src/components/ui/Button';
+import Button from './components/ui/Button';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
