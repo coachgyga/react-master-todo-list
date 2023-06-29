@@ -157,7 +157,7 @@ Tu remarques qu'on utlise la propriété `as` sur le composant `Modal` ainsi que
 <Modal as='form' isOpen={ isModalOpen } onClose={ handleCloseModal } onSubmit={ handleSubmitForm }>
 ```
 
-Cette fonctionnalité n'est pas encore développée dans le composant `Modam` mais on y vient.
+Cette fonctionnalité n'est pas encore développée dans le composant `Modal` mais on y vient.
 
 On part du principe qu'une fois transformée en formulaire, la modale donne accès aux propriétés d'une balise `form`. Nous devrions donc avoir accès à `onSubmit`.
 
