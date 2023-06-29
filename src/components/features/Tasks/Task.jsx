@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import InputText from '../../forms/InputText';
-import DeleteTaskConfirmationModal from '../../../../../todo-list/src/components/features/Tasks/DeleteTaskConfirmationModal';
+import DeleteTaskConfirmationModal from './components/features/Tasks/DeleteTaskConfirmationModal';
 
 const Task = ({ title, created_at, onDeleteTask: handleDeleteTask, onUpdateTask }) => {
 
