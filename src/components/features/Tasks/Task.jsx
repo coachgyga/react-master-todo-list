@@ -40,7 +40,7 @@ const Task = ({ title, created_at, onDeleteTask: handleDeleteTask, onUpdateTask 
 					: <span role="button" onClick={ handleEditTitle }>{ title }</span>
 				}
 			</td>
-			<td>{ created_at.toLocaleDateString() }</td>
+			<td>{ created_at.toLocaleDateString('fr-FR') }</td>
 			<td>
 				<Button variant="danger" onClick={ handleDeleteTask }>Delete</Button>
 			</td>
