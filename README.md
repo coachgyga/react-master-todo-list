@@ -17,21 +17,17 @@
 
 ## Consignes
 
-Pour cet exercice, tu vas devoir cloner le dépôt.
-
-Tu peux taper la commande suivante dans ton terminal:
+Sauvegarde d'abord le travail de l'exercice précédent:
 
 ```bash
-git clone git@github.com:Atomic-React/react-master-todo-list.git
+git add .
 ```
-
-Ensuite, rends toi dans le dossier avec la commande suivante:
 
 ```bash
-cd react-master-todo-list
+git commit -m "exercice terminé"
 ```
 
-Accède à la branche de l'exercice en exécutant la commande:
+Ensuite, accède à la branche de l'exercice en exécutant la commande:
 
 ```bash
 git switch ex05/exercise
@@ -41,6 +37,12 @@ Puis installes les dépendances avec la commande:
 
 ```bash
 npm install
+```
+
+Et lance l'application:
+
+```bash
+npm run dev
 ```
 
 Tu peux maintenant te rendre sur l'URL <http://localhost:5173>. Tu y trouvera l'application dans le même état qu'à la fin de la correction de l'exercice précédent.
