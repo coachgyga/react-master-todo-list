@@ -1,4 +1,4 @@
-import Block from '../../todo-list/src/components/ui/Block';
+import Block from './todo-list/src/components/ui/Block';
 import Tasks from './components/features/Tasks';
 
 const App = () => {
