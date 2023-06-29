@@ -8,7 +8,7 @@ const Task = ({ title, created_at, onDeleteTask: handleDeleteTask }) => {
 			<td>
 				{ title }
 			</td>
-			<td>{ created_at.toLocaleDateString() }</td>
+			<td>{ created_at.toLocaleDateString('fr-FR') }</td>
 			<td>
 				<Button variant="danger" onClick={ handleDeleteTask }>Delete</Button>
 			</td>
