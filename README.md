@@ -30,7 +30,7 @@ git commit -m "exercice terminé"
 Ensuite, accède à la branche de l'exercice en exécutant la commande:
 
 ```bash
-git switch ex05/exercise
+git switch ex06/exercise
 ```
 
 Puis installes les dépendances avec la commande:
