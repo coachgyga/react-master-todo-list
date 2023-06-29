@@ -1,9 +1,5 @@
 # ⚛️ React Master - Todo list: Modification des tâches (Correction)
 
-Dans cet énoncé tu trouvra:
-
-2 💡 indices
-
 ## Sommaire
 
 <!-- no toc -->
@@ -22,30 +18,32 @@ Dans cet énoncé tu trouvra:
 
 ## Consignes
 
-Pour cet exercice, tu vas devoir cloner le dépôt.
-
-Tu peux taper la commande suivante dans ton terminal:
+Sauvegarde d'abord le travail de l'exercice précédent:
 
 ```bash
-git clone git@github.com:Atomic-React/react-master-todo-list.git
+git add .
 ```
 
-Ensuite, rends toi dans le dossier avec la commande suivante:
-
 ```bash
-cd react-master-todo-list
+git commit -m "exercice terminé"
 ```
 
-Accède à la branche de l'exercice en exécutant la commande:
+Ensuite, accède à la branche de l'exercice en exécutant la commande:
 
 ```bash
-git switch ex01/exercise
+git switch ex02/exercise
 ```
 
 Puis installes les dépendances avec la commande:
 
 ```bash
 npm install
+```
+
+Et lance l'application:
+
+```bash
+npm run dev
 ```
 
 Tu peux maintenant te rendre sur l'URL <http://localhost:5173>.
@@ -59,6 +57,10 @@ Tu remarques le `label` au dessus du champ de création d'une nouvelle tâche.
 L'idée ici c'est permettre à l'utilisateur de cliquer sur le titre d'une tâche pour faire apparaître un champ pré-rempli avec le titre et lui permettre de modifier ce titre. Un bouton d'enregistrement doit être placé à côté du champ pour valider la modification.
 
 Une fois la modification faite, le champ doit disparaitre et la ligne de la tâche doit s'afficher comme avant que l'utilisateur ne clique dessus.
+
+Voici à quoi cela doit ressembler:
+
+![todo edit task](docs/todo-edit-task.png)
 
 Pour réaliser cela, tu devra créer un composant dédié au champ que tu pourra appeler à plusieurs endroits.
 
