@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import InputText from '../../forms/InputText';
-import DeleteTaskConfirmModal from './DeleteTaskConfirmModal';
+import DeleteTaskConfirmModal from './DeleteTaskConfirmationModal';
 
 const Task = ({ title, created_at, onDeleteTask: handleDeleteTask, onUpdateTask }) => {
 
