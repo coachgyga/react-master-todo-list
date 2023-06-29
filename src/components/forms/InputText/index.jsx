@@ -1,5 +1,5 @@
-import { forwardRef, useId } from 'react';
 import '../forms.css';
+import { forwardRef, useId } from 'react';
 import { object, string } from 'prop-types';
 
 const InputText = ({ label, style, ...htmlInputProps }, ref) => {
