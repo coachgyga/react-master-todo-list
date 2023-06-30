@@ -19,17 +19,19 @@ const InputSearch = ({ label, style, onSearch: handleSearch, debounceDelay, ...h
 	const handleChangeInputValue = (event) => {
 		const { value } = event.target;
 		setSearchValue(value);
-		clearTimeout(timeoutId);
-		timeoutId = setTimeout(() => {
-			handleSearch(value);
-		}, debounceDelay);
-	};
-
-	const handleInputKeyDown = () => {
 		if (debounceDelay) {
 			clearTimeout(timeoutId);
+			timeoutId = setTimeout(() => {
+				handleSearch(value);
+			}, debounceDelay);
 		}
-	}
+	};
+
+	const handleInputKeyDown = (event) => {
+		if (debounceDelay && event.key !== "Backspace") {
+			clearTimeout(timeoutId);
+		}
+	};
 
 	return (
 		<InputText label={ label } style={ style } type="search" value={ searchValue } onKeyDown={ handleInputKeyDown } onChange={ handleChangeInputValue } { ...htmlInputProps } />
