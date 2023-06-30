@@ -160,32 +160,6 @@ const INITIAL_TASKS_STATE_VALUE = {
 };
 ```
 
-Il faut alors l'ajouter à la valeur du contexte:
-
-```jsx
-const contextValue = {
-	tasks: tasksState.tasks,
-	allTasksCount: tasksState.allTasksCount,
-	todoTasksCount: tasksState.todoTasksCount,
-	completedTasksCount: tasksState.completedTasksCount,
-	isLoading: tasksState.isLoading, // ICI
-	createTask,
-	deleteTask,
-	updateTask,
-};
-```
-
-D'ailleurs pour ne plus avoir à s'embêter avec le fait d'inscrire chaque propriété du `state` en valeur du contexte, nous devrions procéder ainsi:
-
-```jsx
-const contextValue = {
-	...tasksState,
-	createTask,
-	deleteTask,
-	updateTask,
-};
-```
-
 Ce qui changerait la valeur de cette propriété `isLoading`, ça serait une action du `reducer` qui serait utilisée pour mettre `isLoading` à `true` au moment de faire la requête, puis à `false`, une fois la réponse reçue.
 
 ```JSX
