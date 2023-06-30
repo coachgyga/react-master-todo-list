@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import InputText from '../../forms/InputText';
-import DeleteTaskConfirmModal from './DeleteTaskConfirmModal';
+import DeleteTaskConfirmationModal from './DeleteTaskConfirmationModal';
 import Checkbox from '../../forms/Checkbox';
 
 const Task = ({ title, created_at, isDone, onDeleteTask: handleDeleteTask, onUpdateTask }) => {
@@ -51,7 +51,7 @@ const Task = ({ title, created_at, isDone, onDeleteTask: handleDeleteTask, onUpd
 			<td>{ created_at.toLocaleDateString() }</td>
 			<td><Checkbox value={ isDone } onChange={ handleSwitchCompletedTask } useCheckedAsValue /></td>
 			<td>
-				<DeleteTaskConfirmModal onConfirm={ handleDeleteTask } />
+				<DeleteTaskConfirmationModal onConfirm={ handleDeleteTask } />
 			</td>
 		</tr>
 	);
