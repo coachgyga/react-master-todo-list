@@ -333,11 +333,8 @@ const TasksContextProvider = ({ children }) => {
 	};
 
 	const contextValue = {
-		tasks: tasksState.tasks,
-		// Les compteurs ajoutés en valeur du contexte
-		allTasksCount: tasksState.allTasksCount,
-		todoTasksCount: tasksState.todoTasksCount,
-		completedTasksCount: tasksState.completedTasksCount,
+		// On passe toute les propriétés du state en valeur du contexte
+		...tasksState,
 		createTask,
 		deleteTask,
 		updateTask,
