@@ -10,7 +10,7 @@
 ## Notions de l'exercice
 
 *   Context
-*   Reducer
+*   Appels API
 
 ## Consignes
 
