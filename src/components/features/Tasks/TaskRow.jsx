@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import InputText from '../../forms/InputText';
-import DeleteTaskConfirmModal from './DeleteTaskConfirmModal';
+import DeleteTaskConfirmationModal from './DeleteTaskConfirmationModal';
 import Checkbox from '../../forms/Checkbox';
 import useTasksContext from '../../../context/Tasks/useTasksContext';
 
@@ -60,7 +60,7 @@ const TaskRow = ({ id, title, createdAt, isDone }) => {
 			<td>{ new Date(createdAt).toLocaleDateString() }</td>
 			<td><Checkbox value={ isDone } onChange={ handleSwitchCompletedTask } useCheckedAsValue /></td>
 			<td>
-				<DeleteTaskConfirmModal onConfirm={ handleDeleteTask } />
+				<DeleteTaskConfirmationModal onConfirm={ handleDeleteTask } />
 			</td>
 		</tr>
 	);
