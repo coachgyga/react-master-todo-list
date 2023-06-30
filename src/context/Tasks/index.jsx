@@ -65,10 +65,7 @@ const TasksContextProvider = ({ children }) => {
 	};
 
 	const contextValue = {
-		tasks: tasksState.tasks,
-		allTasksCount: tasksState.allTasksCount,
-		todoTasksCount: tasksState.todoTasksCount,
-		completedTasksCount: tasksState.completedTasksCount,
+		...tasksState,
 		createTask,
 		deleteTask,
 		updateTask,
