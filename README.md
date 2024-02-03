@@ -1,5 +1,9 @@
 # ⚛️ React Master - Todo list: Révisions & function as children (Correction)
 
+> **Liens utiles**
+>
+> [Function as Child Components Are an Anti-Pattern](https://americanexpress.io/faccs-are-an-antipattern/)
+
 ## Sommaire
 
 <!-- no toc -->
