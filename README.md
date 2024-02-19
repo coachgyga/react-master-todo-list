@@ -1,4 +1,4 @@
-# Exercices Todo list
+# ⚛️ React Master - Todo list
 
 Pour choisir un exercice, utilise la commande `git switch` suivit du nom de la branche de l'exercice. Par exemple:
 
