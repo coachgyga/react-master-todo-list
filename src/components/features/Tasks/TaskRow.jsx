@@ -1,8 +1,6 @@
 import { string, bool } from 'prop-types';
 import Button from '../../ui/Button';
-import { useState } from 'react';
-import { useRef } from 'react';
-import { useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import InputText from '../../forms/InputText';
 import DeleteTaskConfirmationModal from './DeleteTaskConfirmationModal';
 import Checkbox from '../../forms/Checkbox';
@@ -41,9 +39,10 @@ const TaskRow = ({ id, title, createdAt, isDone }) => {
 		});
 	}
 
-	const handleDeleteTask = () => {
+	const handleDeleteTask = useCallback(() => {
 		deleteTask(id);
-	}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<tr>

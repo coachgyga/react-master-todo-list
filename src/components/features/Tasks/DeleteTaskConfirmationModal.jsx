@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import Button from '../../ui/Button';
 import Modal from '../../ui/Modal';
 import { func } from 'prop-types';
 
-const DeleteTaskConfirmationModal = ({ onConfirm }) => {
+const DeleteTaskConfirmationModal = memo(({ onConfirm }) => { // props avant MAJ !== props après MAJ => re-render
 
 	const [ isModalOpen, setIsModalOpen ] = useState(false);
 
@@ -35,7 +35,9 @@ const DeleteTaskConfirmationModal = ({ onConfirm }) => {
 			</Modal>
 		</>
 	);
-};
+});
+
+DeleteTaskConfirmationModal.displayName = 'DeleteTaskConfirmationModal';
 
 export default DeleteTaskConfirmationModal;
 

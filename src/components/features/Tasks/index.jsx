@@ -41,7 +41,6 @@ const Tasks = () => {
 
 	return (
 		<div className="container">
-			<h1 className="text--primary">Todo</h1>
 			<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
 				<InputSearch label="Search a task" placeholder="Search..." onSearch={ handleSearchTask } style={{ flexGrow: 1 }} />
 				<CreateTaskFormModal onSubmit={ handleSubmitCreateTaskForm } />
