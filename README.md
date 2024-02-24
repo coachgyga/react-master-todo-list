@@ -89,6 +89,14 @@ Bon courage ! 💪
 
 ## Correction
 
-Tu peux consulter la correction écrite ici: <https://github.com/Atomic-React/react-master-todo-list/tree/ex04/correction#correction>
+Tu peux consulter la correction vidéo sur [Atomic React](https://atomic-react.com) ou te rendre sur la branche `ex04/correction`.
 
-Ou suivre la correction en vidéo ici: _Bientôt disponible_
+Pense à sauvegarder ton travail avec les commandes ci-dessous avant de changer de branche !
+
+```bash
+git add .
+```
+
+```bash
+git commit -m "Sauvegarde"
+```
