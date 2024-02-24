@@ -1,5 +1,11 @@
 # ⚛️ React Master - Todo list
 
+Clone le dépôt pour récupérer les exercices:
+
+```bash
+git clone git@github.com:Atomic-React/react-master-todo-list.git
+```
+
 Pour choisir un exercice, utilise la commande `git switch` suivit du nom de la branche de l'exercice. Par exemple:
 
 ```bash
