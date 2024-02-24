@@ -32,4 +32,4 @@ Une fois la sauvegarde réalisée, tu pourra consulter la correction en utilisan
 git switch ex01/correction
 ```
 
-Ou en te rendant sur [Atomic React](https://atomic-react.com) pour consulter la correction écrite ou la correction vidéo.
+Ou en te rendant sur [Atomic React](https://atomic-react.com) pour consulter la correction vidéo.
