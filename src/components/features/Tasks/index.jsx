@@ -4,7 +4,6 @@ import "./Tasks.css";
 import { array } from "prop-types";
 
 const Tasks = ({ tasks }) => {
-  const handleDelete = () => {};
   return (
     <>
       <table className="tasks-table">
@@ -23,9 +22,7 @@ const Tasks = ({ tasks }) => {
                   <td>{task.title}</td>
                   <td>{task.date}</td>
                   <td>
-                    <Button onClick={() => handleDelete()} variant="danger">
-                      Delete
-                    </Button>
+                    <Button variant="danger">Delete</Button>
                   </td>
                 </tr>
               );
