@@ -19,6 +19,10 @@ const App = () => {
     setTasks([...tasks, { id: nextId, title: newTask, date: date }]);
   };
 
+  const handleDeleteTask = (taskId) => () => {
+    setTasks(tasks.filter((task) => task.id != taskId));
+  };
+
   useEffect(() => {
     newTaskInputRef.current.value = "";
   }, [tasks]);
@@ -51,7 +55,7 @@ const App = () => {
       </form>
 
       <Block>
-        <Tasks tasks={tasks} />
+        <Tasks tasks={tasks} onDeleteTask={handleDeleteTask} />
       </Block>
     </div>
   );
